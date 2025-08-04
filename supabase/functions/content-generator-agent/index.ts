@@ -47,7 +47,7 @@ serve(async (req) => {
     const services = contextData?.find(c => c.context_type === 'services')?.content || {};
     const achievements = contextData?.find(c => c.context_type === 'achievements')?.content || {};
 
-    // Generate title and meta with Claude Opus 4
+    // Generate title and meta with Claude Sonnet 4
     const titleMetaResponse = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -56,8 +56,9 @@ serve(async (req) => {
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-3-opus-20240229',
-        max_tokens: 1000,
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 20000,
+        temperature: 1,
         messages: [
           {
             role: 'user',
@@ -83,7 +84,14 @@ serve(async (req) => {
 
             Ensure the content promotes Agentic AI AMRO Ltd's expertise and includes relevant keywords naturally.`
           }
-        ]
+        ],
+        tools: [
+          {
+            "name": "web_search",
+            "type": "web_search_20250305"
+          }
+        ],
+        betas: ["web-search-2025-03-05"]
       }),
     });
 
@@ -122,8 +130,9 @@ serve(async (req) => {
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-3-opus-20240229',
-        max_tokens: 4000,
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 20000,
+        temperature: 1,
         messages: [
           {
             role: 'user',
@@ -160,7 +169,14 @@ serve(async (req) => {
 
             Write content that positions Agentic AI AMRO Ltd as the leading authority in AI automation while providing exceptional value to readers.`
           }
-        ]
+        ],
+        tools: [
+          {
+            "name": "web_search",
+            "type": "web_search_20250305"
+          }
+        ],
+        betas: ["web-search-2025-03-05"]
       }),
     });
 
