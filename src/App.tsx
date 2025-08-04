@@ -8,6 +8,7 @@ import About from "./pages/About";
 import Services from "./pages/Services";
 import CaseStudies from "./pages/CaseStudies";
 import Resources from "./pages/Resources";
+import Blog from "./pages/Blog";
 import Contact from "./pages/Contact";
 import WhatIsAgenticAI from "./pages/WhatIsAgenticAI";
 import NotFound from "./pages/NotFound";
@@ -27,6 +28,8 @@ const App = () => (
           <Route path="/services" element={<Services />} />
           <Route path="/case-studies" element={<CaseStudies />} />
           <Route path="/resources" element={<Resources />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<Blog />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/what-is-agentic-ai" element={<WhatIsAgenticAI />} />
           <Route path="/admin-agentic" element={<AdminDashboard />} />

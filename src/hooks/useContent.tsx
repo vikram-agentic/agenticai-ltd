@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useRealTimeContentUpdates } from './useContentPublishing';
 
 export interface BlogPost {
   id: string;
@@ -134,6 +135,11 @@ export const useContent = () => {
   useEffect(() => {
     refreshContent();
   }, []);
+
+  // Set up real-time updates
+  useRealTimeContentUpdates(() => {
+    refreshContent();
+  });
 
   return {
     blogPosts,
