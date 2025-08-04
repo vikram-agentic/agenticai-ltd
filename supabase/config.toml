@@ -1,1 +1,16 @@
 project_id = "jdbqecrmegeykvpqyrtk"
+
+[functions.keyword-research-agent]
+verify_jwt = false
+
+[functions.serp-analysis-agent]
+verify_jwt = false
+
+[functions.content-generator-agent]
+verify_jwt = false
+
+[functions.image-generator-agent]
+verify_jwt = false
+
+[functions.admin-auth]
+verify_jwt = false
