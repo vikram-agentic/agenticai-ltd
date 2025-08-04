@@ -14,32 +14,29 @@ export const useContentPublishing = (): ContentPublishingSystem => {
 
   const publishContent = async (contentId: string, type: 'blog' | 'resource' | 'service'): Promise<boolean> => {
     try {
-      let tableName = '';
-      switch (type) {
-        case 'blog':
-          tableName = 'generated_content';
-          break;
-        case 'resource':
-          tableName = 'resources'; // Will be created when needed
-          break;
-        case 'service':
-          tableName = 'services'; // Will be created when needed
-          break;
+      // For now, only handle blog content since we have the generated_content table
+      if (type === 'blog') {
+        const { error } = await supabase
+          .from('generated_content')
+          .update({ status: 'published', published_at: new Date().toISOString() })
+          .eq('id', contentId);
+
+        if (error) throw error;
+
+        toast({
+          title: "Content Published",
+          description: `Your ${type} has been published successfully.`,
+        });
+
+        return true;
+      } else {
+        // For resources and services, we'll implement this later when tables are created
+        toast({
+          title: "Feature Coming Soon",
+          description: `Publishing ${type} content will be available once the feature is fully implemented.`,
+        });
+        return false;
       }
-
-      const { error } = await supabase
-        .from(tableName)
-        .update({ status: 'published', published_at: new Date().toISOString() })
-        .eq('id', contentId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Content Published",
-        description: `Your ${type} has been published successfully.`,
-      });
-
-      return true;
     } catch (error) {
       console.error('Error publishing content:', error);
       toast({
@@ -53,32 +50,29 @@ export const useContentPublishing = (): ContentPublishingSystem => {
 
   const unpublishContent = async (contentId: string, type: 'blog' | 'resource' | 'service'): Promise<boolean> => {
     try {
-      let tableName = '';
-      switch (type) {
-        case 'blog':
-          tableName = 'generated_content';
-          break;
-        case 'resource':
-          tableName = 'resources';
-          break;
-        case 'service':
-          tableName = 'services';
-          break;
+      // For now, only handle blog content since we have the generated_content table
+      if (type === 'blog') {
+        const { error } = await supabase
+          .from('generated_content')
+          .update({ status: 'draft', published_at: null })
+          .eq('id', contentId);
+
+        if (error) throw error;
+
+        toast({
+          title: "Content Unpublished",
+          description: `Your ${type} has been unpublished.`,
+        });
+
+        return true;
+      } else {
+        // For resources and services, we'll implement this later when tables are created
+        toast({
+          title: "Feature Coming Soon",
+          description: `Unpublishing ${type} content will be available once the feature is fully implemented.`,
+        });
+        return false;
       }
-
-      const { error } = await supabase
-        .from(tableName)
-        .update({ status: 'draft', published_at: null })
-        .eq('id', contentId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Content Unpublished",
-        description: `Your ${type} has been unpublished.`,
-      });
-
-      return true;
     } catch (error) {
       console.error('Error unpublishing content:', error);
       toast({
