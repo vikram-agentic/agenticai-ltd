@@ -15,12 +15,18 @@ import {
   ShoppingBag,
   Scale,
   Home,
-  GraduationCap
+  GraduationCap,
+  Target,
+  Users,
+  CheckCircle,
+  ArrowRight
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 
 const Services = () => {
+  const navigate = useNavigate();
   const mainServices = [
     {
       icon: Brain,
@@ -147,7 +153,48 @@ const Services = () => {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
-            {mainServices.map((service, index) => (
+            {[
+              {
+                icon: Brain,
+                title: "Custom AI Development",
+                description: "Tailored AI solutions built from the ground up to solve your unique business challenges.",
+                features: ["Machine Learning Models", "Neural Networks", "Computer Vision", "Natural Language Processing"],
+                price: "Starting at $50,000",
+                path: "/services/custom-ai-development"
+              },
+              {
+                icon: Bot,
+                title: "AI Agent & Automation",
+                description: "Intelligent agents that automate complex workflows and decision-making processes.",
+                features: ["Process Automation", "Intelligent Agents", "Workflow Optimization", "Decision Support"],
+                price: "Starting at $25,000",
+                path: "/services/ai-agent-automation"
+              },
+              {
+                icon: Zap,
+                title: "Specialized AI Solutions",
+                description: "Advanced AI applications for specific domains like computer vision, NLP, and predictive analytics.",
+                features: ["Computer Vision", "Predictive Analytics", "Recommendation Systems", "Fraud Detection"],
+                price: "Starting at $75,000",
+                path: "/services/specialized-ai-solutions"
+              },
+              {
+                icon: Target,
+                title: "Industry-Specific AI",
+                description: "AI solutions designed for specific industries with deep domain expertise.",
+                features: ["Healthcare AI", "Financial AI", "Retail AI", "Manufacturing AI"],
+                price: "Starting at $100,000",
+                path: "/services/industry-specific-ai"
+              },
+              {
+                icon: Users,
+                title: "AI Consulting & Support",
+                description: "Strategic guidance and ongoing support for your AI initiatives.",
+                features: ["Strategy Development", "Implementation Planning", "Training Programs", "24/7 Support"],
+                price: "Starting at $15,000",
+                path: "/services/ai-consulting-support"
+              }
+            ].map((service, index) => (
               <Card key={index} className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all">
                 <CardHeader>
                   <div className="flex items-center gap-4 mb-4">
@@ -162,19 +209,20 @@ const Services = () => {
                   <p className="text-muted-foreground">{service.description}</p>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-2">
+                  <ul className="space-y-2 mb-6">
                     {service.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-center gap-2 text-sm">
-                        <div className="w-1.5 h-1.5 bg-primary rounded-full" />
+                        <CheckCircle className="w-4 h-4 text-green-500" />
                         {feature}
                       </li>
                     ))}
                   </ul>
                   <Button 
-                    className="w-full mt-6 bg-gradient-primary hover:opacity-90"
-                    onClick={handleScheduleConsultation}
+                    className="w-full bg-gradient-primary hover:opacity-90"
+                    onClick={() => navigate(service.path)}
                   >
                     Learn More
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </CardContent>
               </Card>

@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, Clock, DollarSign, Users, Star, ArrowRight } from "lucide-react";
+import { Building2, Heart, ShoppingCart, Factory, Star, TrendingUp, Users, DollarSign, ArrowRight, Clock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 
 const CaseStudies = () => {
+  const navigate = useNavigate();
   const mainCaseStudy = {
     client: "Heritage Community Bank",
     industry: "Financial Services",
@@ -232,28 +234,54 @@ const CaseStudies = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {caseStudyCategories.map((category, index) => (
-              <Card key={index} className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-colors">
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-xl font-heading font-bold mb-2">{category.title}</h3>
-                      <p className="text-muted-foreground text-sm">{category.description}</p>
-                    </div>
-                    <Badge variant="outline">{category.projects} projects</Badge>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                title: "Financial Services",
+                description: "Fraud detection, risk assessment, and algorithmic trading solutions",
+                metrics: "99.7% fraud detection accuracy",
+                icon: Building2,
+                path: "/case-studies/financial-services"
+              },
+              {
+                title: "Healthcare",
+                description: "Medical imaging, diagnostics, and patient care optimization",
+                metrics: "60% faster diagnosis times",
+                icon: Heart,
+                path: "/case-studies/healthcare"
+              },
+              {
+                title: "Retail & E-commerce",
+                description: "Personalization, inventory management, and customer experience",
+                metrics: "45% increase in conversion rates",
+                icon: ShoppingCart,
+                path: "/case-studies/retail-ecommerce"
+              },
+              {
+                title: "Manufacturing",
+                description: "Predictive maintenance, quality control, and supply chain optimization",
+                metrics: "50% reduction in downtime",
+                icon: Factory,
+                path: "/case-studies/manufacturing"
+              }
+            ].map((category, index) => (
+              <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <category.icon className="w-8 h-8 text-primary" />
                   </div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-2xl font-heading font-bold bg-gradient-primary bg-clip-text text-transparent">
-                        {category.avgROI}
-                      </div>
-                      <div className="text-sm text-muted-foreground">Average ROI</div>
-                    </div>
-                    <Button variant="ghost" size="sm">
-                      View Projects <ArrowRight className="h-4 w-4 ml-1" />
-                    </Button>
-                  </div>
+                  <CardTitle className="text-xl">{category.title}</CardTitle>
+                  <CardDescription>{category.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-primary font-semibold mb-4">{category.metrics}</p>
+                  <Button 
+                    className="w-full" 
+                    variant="outline"
+                    onClick={() => navigate(category.path)}
+                  >
+                    View Projects
+                  </Button>
                 </CardContent>
               </Card>
             ))}

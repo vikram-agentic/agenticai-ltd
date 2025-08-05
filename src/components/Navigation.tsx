@@ -46,20 +46,179 @@ const Navigation = () => {
           <div className="hidden md:flex items-center space-x-8">
             <NavigationMenu>
               <NavigationMenuList>
-                {navigationItems.map((item) => (
-                  <NavigationMenuItem key={item.path}>
-                    <Link
-                      to={item.path}
-                      className={`group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 ${
-                        isActive(item.path)
-                          ? "text-primary bg-accent/50"
-                          : "text-foreground"
-                      }`}
-                    >
-                      {item.name}
-                    </Link>
-                  </NavigationMenuItem>
-                ))}
+                <NavigationMenuItem>
+                  <Link
+                    to="/"
+                    className={`group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 ${
+                      isActive("/") ? "text-primary bg-accent/50" : "text-foreground"
+                    }`}
+                  >
+                    Home
+                  </Link>
+                </NavigationMenuItem>
+                
+                <NavigationMenuItem>
+                  <Link
+                    to="/about"
+                    className={`group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 ${
+                      isActive("/about") ? "text-primary bg-accent/50" : "text-foreground"
+                    }`}
+                  >
+                    About
+                  </Link>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className={location.pathname.startsWith('/services') ? "text-primary bg-accent/50" : ""}>
+                    Services
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="grid gap-3 p-6 w-[500px] grid-cols-2 bg-background z-50">
+                      <Link
+                        to="/services"
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                      >
+                        <div className="text-sm font-medium leading-none">All Services</div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                          View all our AI solutions and services
+                        </p>
+                      </Link>
+                      <Link
+                        to="/services/custom-ai-development"
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                      >
+                        <div className="text-sm font-medium leading-none">Custom AI Development</div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                          Tailored AI solutions for your business
+                        </p>
+                      </Link>
+                      <Link
+                        to="/services/ai-agent-automation"
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                      >
+                        <div className="text-sm font-medium leading-none">AI Agent & Automation</div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                          Intelligent automation solutions
+                        </p>
+                      </Link>
+                      <Link
+                        to="/services/specialized-ai-solutions"
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                      >
+                        <div className="text-sm font-medium leading-none">Specialized AI Solutions</div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                          Advanced AI for complex challenges
+                        </p>
+                      </Link>
+                      <Link
+                        to="/services/industry-specific-ai"
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                      >
+                        <div className="text-sm font-medium leading-none">Industry-Specific AI</div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                          AI solutions tailored to your industry
+                        </p>
+                      </Link>
+                      <Link
+                        to="/services/ai-consulting-support"
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                      >
+                        <div className="text-sm font-medium leading-none">AI Consulting & Support</div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                          Expert guidance and ongoing support
+                        </p>
+                      </Link>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className={location.pathname.startsWith('/case-studies') ? "text-primary bg-accent/50" : ""}>
+                    Case Studies
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="grid gap-3 p-6 w-[400px] grid-cols-1 bg-background z-50">
+                      <Link
+                        to="/case-studies"
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                      >
+                        <div className="text-sm font-medium leading-none">All Case Studies</div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                          View all success stories across industries
+                        </p>
+                      </Link>
+                      <Link
+                        to="/case-studies/financial-services"
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                      >
+                        <div className="text-sm font-medium leading-none">Financial Services</div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                          Fraud detection and risk assessment
+                        </p>
+                      </Link>
+                      <Link
+                        to="/case-studies/healthcare"
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                      >
+                        <div className="text-sm font-medium leading-none">Healthcare</div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                          Medical imaging and diagnostics
+                        </p>
+                      </Link>
+                      <Link
+                        to="/case-studies/retail-ecommerce"
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                      >
+                        <div className="text-sm font-medium leading-none">Retail & E-commerce</div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                          Personalization and optimization
+                        </p>
+                      </Link>
+                      <Link
+                        to="/case-studies/manufacturing"
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                      >
+                        <div className="text-sm font-medium leading-none">Manufacturing</div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                          Predictive maintenance and quality control
+                        </p>
+                      </Link>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <Link
+                    to="/resources"
+                    className={`group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 ${
+                      isActive("/resources") ? "text-primary bg-accent/50" : "text-foreground"
+                    }`}
+                  >
+                    Resources
+                  </Link>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <Link
+                    to="/blog"
+                    className={`group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 ${
+                      isActive("/blog") ? "text-primary bg-accent/50" : "text-foreground"
+                    }`}
+                  >
+                    Blog
+                  </Link>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <Link
+                    to="/contact"
+                    className={`group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 ${
+                      isActive("/contact") ? "text-primary bg-accent/50" : "text-foreground"
+                    }`}
+                  >
+                    Contact
+                  </Link>
+                </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
             

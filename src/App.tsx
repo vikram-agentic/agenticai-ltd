@@ -23,6 +23,9 @@ import AIConsultingSupport from "./pages/services/AIConsultingSupport";
 
 // Case Study Pages
 import FinancialServices from "./pages/case-studies/FinancialServices";
+import Healthcare from "./pages/case-studies/Healthcare";
+import RetailEcommerce from "./pages/case-studies/RetailEcommerce";
+import Manufacturing from "./pages/case-studies/Manufacturing";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +46,9 @@ const App = () => (
           <Route path="/services/ai-consulting-support" element={<AIConsultingSupport />} />
           <Route path="/case-studies" element={<CaseStudies />} />
           <Route path="/case-studies/financial-services" element={<FinancialServices />} />
+          <Route path="/case-studies/healthcare" element={<Healthcare />} />
+          <Route path="/case-studies/retail-ecommerce" element={<RetailEcommerce />} />
+          <Route path="/case-studies/manufacturing" element={<Manufacturing />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<Blog />} />
