@@ -5,62 +5,84 @@
 /* Agentic AI AMRO Ltd Design System - Dark theme with purple and pink gradients */
 
 @layer base {
-  :root {
-    /* Dark theme base colors */
-    --background: 224 15% 8%;
-    --foreground: 0 0% 98%;
+:root {
+    /* Background colors */
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
 
-    --card: 224 12% 12%;
-    --card-foreground: 0 0% 98%;
+    /* Card colors */
+    --card: 224 71% 4%;
+    --card-foreground: 213 31% 91%;
 
-    --popover: 224 12% 12%;
-    --popover-foreground: 0 0% 98%;
+    /* Popover colors */
+    --popover: 224 71% 4%;
+    --popover-foreground: 213 31% 91%;
 
-    /* Purple primary colors */
-    --primary: 262 83% 58%;
-    --primary-foreground: 0 0% 98%;
-    --primary-glow: 258 90% 66%;
+    /* Primary colors */
+    --primary: 263 70% 50%;
+    --primary-foreground: 210 20% 98%;
+    --primary-glow: 263 70% 65%;
 
-    /* Dark secondary colors */
-    --secondary: 224 12% 15%;
-    --secondary-foreground: 0 0% 98%;
+    /* Secondary colors */
+    --secondary: 215 27% 17%;
+    --secondary-foreground: 210 20% 98%;
 
-    --muted: 224 12% 15%;
-    --muted-foreground: 215 20% 65%;
+    /* Muted colors */
+    --muted: 215 27% 17%;
+    --muted-foreground: 217 10% 64%;
 
-    --accent: 328 86% 70%;
-    --accent-foreground: 0 0% 98%;
+    /* Accent colors */
+    --accent: 300 69% 71%;
+    --accent-foreground: 210 20% 98%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    /* Destructive colors */
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 20% 98%;
 
-    --border: 224 12% 20%;
-    --input: 224 12% 15%;
-    --ring: 262 83% 58%;
+    /* Border colors */
+    --border: 215 27% 17%;
+    --input: 215 27% 17%;
+    --ring: 263 70% 50%;
 
     --radius: 0.5rem;
 
-    /* Custom gradient colors */
-    --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%), hsl(258 90% 66%));
-    --gradient-accent: linear-gradient(135deg, hsl(262 83% 58%), hsl(328 86% 70%));
-    --gradient-hero: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(258 90% 66%) 50%, hsl(328 86% 70%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(224 12% 12% / 0.8), hsl(224 15% 8% / 0.9));
+    /* Custom gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(263, 70%, 50%), hsl(300, 69%, 71%));
+    --gradient-accent: linear-gradient(135deg, hsl(300, 69%, 71%), hsl(263, 70%, 50%));
+    --gradient-hero: linear-gradient(135deg, hsl(224, 71%, 4%) 0%, hsl(263, 70%, 20%) 50%, hsl(300, 69%, 35%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(215, 27%, 17%) 0%, hsl(263, 70%, 15%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(224, 71%, 4%), hsl(215, 27%, 17%));
 
-    /* Glass morphism effects */
-    --glass-bg: hsl(224 12% 12% / 0.4);
-    --glass-border: hsl(262 83% 58% / 0.2);
-    --glass-shadow: 0 8px 32px hsl(262 83% 58% / 0.1);
+    /* Glassmorphism */
+    --glass-bg: hsla(224, 71%, 4%, 0.8);
+    --glass-border: hsla(263, 70%, 50%, 0.2);
+
+    /* Shadows */
+    --shadow-elegant: 0 10px 30px -10px hsl(263 70% 50% / 0.3);
+    --shadow-glow: 0 0 40px hsl(263 70% 65% / 0.4);
+    --shadow-card: 0 4px 20px -2px hsl(263 70% 50% / 0.15);
 
     /* Neural network grid */
-    --grid-color: hsl(262 83% 58% / 0.1);
+    --neural-grid: radial-gradient(circle at 20% 50%, hsla(263, 70%, 50%, 0.3) 0%, transparent 50%),
+                   radial-gradient(circle at 80% 20%, hsla(300, 69%, 71%, 0.3) 0%, transparent 50%),
+                   radial-gradient(circle at 40% 80%, hsla(263, 70%, 50%, 0.2) 0%, transparent 50%);
 
-    /* Animations */
+    /* Smooth transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-glow: box-shadow 0.3s ease-in-out;
+    --transition-spring: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     /* Typography */
-    --font-heading: 'Inter', system-ui, sans-serif;
-    --font-body: 'Inter', system-ui, sans-serif;
+    --font-heading: 'Inter', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    
+    /* Modern spacing */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    --space-3xl: 4rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -104,41 +126,94 @@
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow);
+    box-shadow: var(--shadow-card);
   }
 
   .neural-grid {
-    background-image: 
-      linear-gradient(var(--grid-color) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-    background-size: 50px 50px;
+    background: var(--neural-grid);
   }
 
   .glow-effect {
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.5);
-    transition: var(--transition-glow);
+    box-shadow: var(--shadow-glow);
+    transition: var(--transition-smooth);
   }
 
   .glow-effect:hover {
-    box-shadow: 0 0 30px hsl(var(--primary) / 0.8);
+    box-shadow: var(--shadow-elegant);
+  }
+  
+  .text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .border-gradient {
+    border: 1px solid transparent;
+    background: linear-gradient(var(--card), var(--card)) padding-box,
+                var(--gradient-primary) border-box;
+  }
+
+  .hover-lift {
+    transition: var(--transition-smooth);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-elegant);
+  }
+
+  .backdrop-blur-glass {
+    backdrop-filter: blur(16px) saturate(180%);
   }
 }
 
 /* Animation keyframes */
 @layer utilities {
-  @keyframes float {
+@keyframes float {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-10px); }
   }
 
   @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 20px hsl(var(--primary) / 0.3); }
-    50% { box-shadow: 0 0 30px hsl(var(--primary) / 0.6); }
+    0%, 100% { 
+      box-shadow: 0 0 20px hsl(var(--primary) / 0.5);
+    }
+    50% { 
+      box-shadow: 0 0 40px hsl(var(--primary) / 0.8);
+    }
   }
 
   @keyframes slide-up {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { 
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes gradient-x {
+    0%, 100% {
+      transform: translateX(0%);
+    }
+    50% {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .animate-float {
@@ -150,7 +225,15 @@
   }
 
   .animate-slide-up {
-    animation: slide-up 0.6s ease-out forwards;
+    animation: slide-up 0.6s ease-out;
+  }
+
+  .animate-gradient-x {
+    animation: gradient-x 15s ease infinite;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out;
   }
 }
 
