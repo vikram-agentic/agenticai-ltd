@@ -14,6 +14,16 @@ import WhatIsAgenticAI from "./pages/WhatIsAgenticAI";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/AdminDashboard";
 
+// Service Pages
+import CustomAIDevelopment from "./pages/services/CustomAIDevelopment";
+import AIAgentAutomation from "./pages/services/AIAgentAutomation";
+import SpecializedAISolutions from "./pages/services/SpecializedAISolutions";
+import IndustrySpecificAI from "./pages/services/IndustrySpecificAI";
+import AIConsultingSupport from "./pages/services/AIConsultingSupport";
+
+// Case Study Pages
+import FinancialServices from "./pages/case-studies/FinancialServices";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -26,7 +36,13 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/services/custom-ai-development" element={<CustomAIDevelopment />} />
+          <Route path="/services/ai-agent-automation" element={<AIAgentAutomation />} />
+          <Route path="/services/specialized-ai-solutions" element={<SpecializedAISolutions />} />
+          <Route path="/services/industry-specific-ai" element={<IndustrySpecificAI />} />
+          <Route path="/services/ai-consulting-support" element={<AIConsultingSupport />} />
           <Route path="/case-studies" element={<CaseStudies />} />
+          <Route path="/case-studies/financial-services" element={<FinancialServices />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<Blog />} />

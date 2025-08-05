@@ -36,9 +36,7 @@ const Navigation = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">A</span>
-            </div>
+            <img src="/src/assets/logo.png" alt="Agentic AI Logo" className="w-8 h-8" />
             <span className="font-heading font-bold text-xl">
               Agentic AI
             </span>
