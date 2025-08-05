@@ -179,7 +179,7 @@ const AIConsultingSupport = () => {
             <Button 
               size="lg" 
               variant="outline" 
-              onClick={handleContactUs}
+              onClick={() => navigate('/support-options')}
             >
               Explore Support Options
             </Button>
@@ -228,7 +228,7 @@ const AIConsultingSupport = () => {
                   <Button 
                     className="w-full mt-6" 
                     variant="outline"
-                    onClick={handleScheduleConsultation}
+                    onClick={() => navigate('/support-options')}
                   >
                     Learn More
                   </Button>

@@ -352,7 +352,7 @@ const FinancialServices = () => {
                 <Button 
                   variant="secondary" 
                   className="w-full mt-4"
-                  onClick={handleScheduleConsultation}
+                  onClick={() => navigate('/roi-calculator')}
                 >
                   Calculate Your ROI
                 </Button>

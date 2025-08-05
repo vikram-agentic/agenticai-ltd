@@ -13,6 +13,9 @@ import Contact from "./pages/Contact";
 import WhatIsAgenticAI from "./pages/WhatIsAgenticAI";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/AdminDashboard";
+import ROICalculator from "./pages/ROICalculator";
+import Portfolio from "./pages/Portfolio";
+import SupportOptions from "./pages/SupportOptions";
 
 // Service Pages
 import CustomAIDevelopment from "./pages/services/CustomAIDevelopment";
@@ -55,6 +58,9 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/what-is-agentic-ai" element={<WhatIsAgenticAI />} />
           <Route path="/admin-agentic" element={<AdminDashboard />} />
+          <Route path="/roi-calculator" element={<ROICalculator />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/support-options" element={<SupportOptions />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

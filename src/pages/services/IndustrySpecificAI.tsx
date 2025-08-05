@@ -159,7 +159,7 @@ const IndustrySpecificAI = () => {
             <Button 
               size="lg" 
               variant="outline" 
-              onClick={handleContactUs}
+              onClick={() => navigate('/case-studies')}
             >
               View Industry Case Studies
             </Button>
