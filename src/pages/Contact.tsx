@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   Mail, 
   Phone, 
@@ -44,12 +45,23 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Call Supabase Edge Function to handle contact form submission
+      const { data, error } = await supabase.functions.invoke('contact-form-handler', {
+        body: formData
+      });
+
+      if (error) {
+        console.error('Contact form error:', error);
+        throw new Error(error.message || 'Failed to submit contact form');
+      }
+
+      if (!data || !data.success) {
+        throw new Error(data?.error || 'Failed to submit contact form');
+      }
       
       toast({
         title: "Message Sent Successfully!",
-        description: "We'll get back to you within 24 hours.",
+        description: data.message || "We'll get back to you within 24 hours.",
       });
 
       // Reset form
@@ -62,10 +74,11 @@ const Contact = () => {
         budget: "",
         message: ""
       });
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Contact form submission error:', error);
       toast({
         title: "Error Sending Message",
-        description: "Please try again or contact us directly.",
+        description: error.message || "Please try again or contact us directly.",
         variant: "destructive",
       });
     } finally {

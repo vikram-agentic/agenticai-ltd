@@ -46,7 +46,7 @@ serve(async (req) => {
 
       return new Response(JSON.stringify({
         success: true,
-        sessionToken,
+        token: sessionToken,
         expiresAt: expiresAt.toISOString(),
         user: {
           email,

@@ -6,6 +6,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const bflApiKey = Deno.env.get('BFL_API_KEY');
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -14,126 +16,220 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const fluxApiKey = Deno.env.get('FLUX_API_KEY');
 
-    if (!fluxApiKey) {
-      throw new Error('FLUX_API_KEY is not configured');
+    if (!bflApiKey) {
+      throw new Error('BFL_API_KEY is not configured');
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { contentId, prompt, aspectRatio = '16:9' } = await req.json();
+    const { requestId, content, title } = await req.json();
 
-    if (!contentId || !prompt) {
-      throw new Error('Missing required fields: contentId and prompt');
+    if (!requestId || !content || !title) {
+      throw new Error('Missing required fields: requestId, content, and title');
     }
 
-    console.log('Starting image generation for content:', contentId);
+    console.log('Starting AI image generation for request:', requestId);
 
-    // Enhanced prompt for Agentic AI branding
-    const enhancedPrompt = `${prompt}. Professional, high-quality, tech-focused image with purple and pink gradient accents. Modern AI and automation theme. Corporate and futuristic aesthetic. Ultra high resolution.`;
+    // Update request status
+    await supabase
+      .from('content_requests')
+      .update({ status: 'generating_images', progress: 85 })
+      .eq('id', requestId);
 
-    // Call Flux Kontext Pro API
-    const fluxResponse = await fetch('https://api.bfl.ai/v1/flux-kontext-pro', {
+    // Step 1: Generate image prompts from content
+    console.log('Generating image prompts from content...');
+    
+    const promptGenerationResponse = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'x-key': fluxApiKey,
+        'Authorization': `Bearer ${Deno.env.get('ANTHROPIC_API_KEY')}`,
         'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        prompt: enhancedPrompt,
-        aspect_ratio: aspectRatio,
-        output_format: 'png',
-        prompt_upsampling: true,
-        safety_tolerance: 2
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        temperature: 0.7,
+        messages: [
+          {
+            role: 'user',
+            content: `You are an expert image prompt engineer for Agentic AI AMRO Ltd. Create compelling image prompts for the following content:
+
+Title: ${title}
+Content: ${content.substring(0, 2000)}...
+
+Requirements:
+1. Create 3 different image prompts for different aspects of the content
+2. Focus on AI automation, technology, and business themes
+3. Include professional, modern, and futuristic elements
+4. Optimize for BFL Flux Kontext Pro model
+5. Include specific style and quality parameters
+
+Provide response in JSON format:
+{
+  "imagePrompts": [
+    {
+      "prompt": "detailed prompt description",
+      "aspectRatio": "16:9",
+      "style": "professional, modern, tech-focused",
+      "purpose": "hero image, featured image, or section illustration"
+    }
+  ],
+  "brandGuidelines": {
+    "colorScheme": "purple, blue, white",
+    "style": "modern, professional, futuristic",
+    "elements": "AI, automation, technology, business"
+  }
+}
+
+Focus on creating images that represent Agentic AI AMRO Ltd's expertise in AI automation and business solutions.`
+          }
+        ]
       }),
     });
 
-    if (!fluxResponse.ok) {
-      throw new Error(`Flux API error: ${fluxResponse.statusText}`);
+    if (!promptGenerationResponse.ok) {
+      throw new Error(`Claude API error: ${promptGenerationResponse.statusText}`);
     }
 
-    const fluxData = await fluxResponse.json();
-    console.log('Flux API response:', fluxData);
+    const promptData = await promptGenerationResponse.json();
+    const promptContent = promptData.content[0].text;
 
-    // If we get a polling URL, we need to wait for the image to be generated
-    let imageUrl = '';
-    if (fluxData.polling_url) {
-      // Poll for completion (simplified for this example)
-      let attempts = 0;
-      const maxAttempts = 30; // 30 attempts = ~5 minutes
-
-      while (attempts < maxAttempts) {
-        await new Promise(resolve => setTimeout(resolve, 10000)); // Wait 10 seconds
-        
-        const pollResponse = await fetch(fluxData.polling_url, {
-          headers: { 'x-key': fluxApiKey }
-        });
-        
-        if (pollResponse.ok) {
-          const pollData = await pollResponse.json();
-          
-          if (pollData.status === 'completed' && pollData.result?.sample) {
-            imageUrl = pollData.result.sample;
-            break;
-          } else if (pollData.status === 'failed') {
-            throw new Error('Image generation failed');
+    let parsedPrompts;
+    try {
+      parsedPrompts = JSON.parse(promptContent);
+    } catch (e) {
+      parsedPrompts = {
+        imagePrompts: [
+          {
+            prompt: "Modern AI automation technology concept, purple and blue gradient background, professional business setting, futuristic interface, clean design, high quality, 4K",
+            aspectRatio: "16:9",
+            style: "professional, modern, tech-focused",
+            purpose: "hero image"
           }
+        ],
+        brandGuidelines: {
+          colorScheme: "purple, blue, white",
+          style: "modern, professional, futuristic",
+          elements: "AI, automation, technology, business"
         }
-        
-        attempts++;
+      };
+    }
+
+    // Step 2: Generate images using BFL Flux Kontext Pro
+    console.log('Generating images with BFL Flux...');
+    
+    const generatedImages = [];
+
+    for (const imagePrompt of parsedPrompts.imagePrompts) {
+      const bflResponse = await fetch('https://api.bfl.ml/v1/images/generations', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${bflApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'kontext-pro',
+          prompt: imagePrompt.prompt,
+          aspect_ratio: imagePrompt.aspectRatio,
+          quality: 'high',
+          style: imagePrompt.style,
+          negative_prompt: "blurry, low quality, distorted, amateur, cartoon, anime",
+          num_images: 1,
+          guidance_scale: 7.5,
+          num_inference_steps: 50,
+          seed: Math.floor(Math.random() * 1000000)
+        }),
+      });
+
+      if (!bflResponse.ok) {
+        throw new Error(`BFL API error: ${bflResponse.statusText}`);
       }
 
-      if (!imageUrl) {
-        throw new Error('Image generation timed out');
+      const bflData = await bflResponse.json();
+      
+      if (bflData.data && bflData.data.length > 0) {
+        generatedImages.push({
+          prompt: imagePrompt.prompt,
+          imageUrl: bflData.data[0].url,
+          aspectRatio: imagePrompt.aspectRatio,
+          purpose: imagePrompt.purpose,
+          generationParams: {
+            model: 'kontext-pro',
+            quality: 'high',
+            guidance_scale: 7.5,
+            num_inference_steps: 50
+          }
+        });
       }
-    } else if (fluxData.result?.sample) {
-      imageUrl = fluxData.result.sample;
-    } else {
-      throw new Error('No image URL received from Flux API');
     }
 
     // Log API usage
-    await supabase.from('api_usage_logs').insert({
-      service_name: 'flux',
-      endpoint: 'flux-kontext-pro',
-      cost_usd: 0.05, // Approximate cost per image
-      request_data: { prompt: enhancedPrompt, aspectRatio },
-      response_data: { imageUrl },
-      success: true
-    });
+    await supabase.from('api_usage_logs').insert([
+      {
+        service_name: 'claude',
+        endpoint: 'messages',
+        tokens_used: promptData.usage?.output_tokens || 0,
+        cost_usd: ((promptData.usage?.input_tokens || 0) * 0.000015) + ((promptData.usage?.output_tokens || 0) * 0.000075),
+        request_data: { type: 'image_prompt_generation', requestId },
+        response_data: { prompts: parsedPrompts },
+        success: true
+      },
+      {
+        service_name: 'bfl_flux',
+        endpoint: 'images/generations',
+        tokens_used: generatedImages.length,
+        cost_usd: generatedImages.length * 0.05, // Approximate cost per image
+        request_data: { type: 'image_generation', requestId, model: 'kontext-pro' },
+        response_data: { imagesGenerated: generatedImages.length },
+        success: true
+      }
+    ]);
 
-    // Store image record
-    const { data: imageRecord } = await supabase
-      .from('ai_generated_images')
-      .insert({
-        content_id: contentId,
-        prompt: enhancedPrompt,
-        image_url: imageUrl,
-        aspect_ratio: aspectRatio,
-        generation_params: {
-          model: 'flux-kontext-pro',
-          prompt_upsampling: true,
-          safety_tolerance: 2,
-          output_format: 'png'
-        }
-      })
-      .select()
+    // Store generated images
+    const { data: contentRecord } = await supabase
+      .from('generated_content')
+      .select('id')
+      .eq('request_id', requestId)
       .single();
 
-    // Update the content record with the featured image
+    if (contentRecord && generatedImages.length > 0) {
+      for (const image of generatedImages) {
+        await supabase
+          .from('ai_generated_images')
+          .insert({
+            content_id: contentRecord.id,
+            prompt: image.prompt,
+            image_url: image.imageUrl,
+            aspect_ratio: image.aspectRatio,
+            generation_params: image.generationParams,
+            purpose: image.purpose
+          });
+      }
+
+      // Update content with featured image
+      await supabase
+        .from('generated_content')
+        .update({ 
+          featured_image_url: generatedImages[0].imageUrl,
+          status: 'draft'
+        })
+        .eq('id', contentRecord.id);
+    }
+
+    // Update request to completed
     await supabase
-      .from('generated_content')
-      .update({ featured_image_url: imageUrl })
-      .eq('id', contentId);
+      .from('content_requests')
+      .update({ status: 'completed', progress: 100 })
+      .eq('id', requestId);
 
     console.log('Image generation completed successfully');
 
     return new Response(JSON.stringify({
       success: true,
-      imageData: imageRecord,
-      imageUrl: imageUrl,
-      message: 'Image generated successfully'
+      images: generatedImages,
+      message: 'Images generated successfully with BFL Flux Kontext Pro'
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -147,8 +243,8 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     await supabase.from('api_usage_logs').insert({
-      service_name: 'flux',
-      endpoint: 'flux-kontext-pro',
+      service_name: 'bfl_flux',
+      endpoint: 'images/generations',
       success: false,
       error_message: error.message
     });

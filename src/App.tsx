@@ -16,6 +16,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ROICalculator from "./pages/ROICalculator";
 import Portfolio from "./pages/Portfolio";
 import SupportOptions from "./pages/SupportOptions";
+import { Chatbot } from "./components/Chatbot";
 
 // Service Pages
 import CustomAIDevelopment from "./pages/services/CustomAIDevelopment";
@@ -37,7 +38,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
@@ -64,6 +65,7 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <Chatbot />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

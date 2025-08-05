@@ -1,73 +1,267 @@
-# Welcome to your Lovable project
+# Agentic AI - Advanced Content Management Dashboard
 
-## Project info
+A comprehensive, modern admin dashboard for AI automation agencies with advanced AI-powered content generation capabilities, real-time synchronization, and professional-grade SEO tools.
 
-**URL**: https://lovable.dev/projects/b13dfec9-5674-477f-b967-206e8c764e3d
+## 🚀 Recent Updates
 
-## How can I edit this code?
+**✅ Successfully migrated to Google Gemini API!**
+- Replaced Perplexity and Anthropic Claude with Google Gemini for better performance and cost-effectiveness
+- Updated all Supabase Edge Functions to use Gemini 2.0 Flash Exp
+- Enhanced content generation with improved AI capabilities
+- Maintained all existing functionality while reducing API costs
 
-There are several ways of editing your application.
+## ✨ Features
 
-**Use Lovable**
+### 🤖 AI-Powered Content Generation
+- **Google Gemini Integration**: Advanced AI content generation using Gemini 2.0 Flash Exp
+- **Comprehensive Keyword Research**: AI-driven keyword analysis and optimization
+- **SERP Analysis**: Detailed search engine results page analysis
+- **SEO-Optimized Content**: Automatically generated SEO-friendly content
+- **Image Generation**: BFL Flux Kontext Pro integration for custom images
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/b13dfec9-5674-477f-b967-206e8c764e3d) and start prompting.
+### 📊 Real-Time Dashboard
+- **Live Statistics**: Real-time content and request tracking
+- **Activity Feed**: Live updates and notifications
+- **Progress Tracking**: Step-by-step generation progress
+- **Content Management**: Preview, edit, and publish generated content
 
-Changes made via Lovable will be committed automatically to this repo.
+### 🔐 Secure Authentication
+- **Admin Login**: Secure token-based authentication
+- **Session Management**: Persistent login sessions
+- **Role-Based Access**: Admin-only dashboard access
 
-**Use your preferred IDE**
+### 🎨 Modern UI/UX
+- **Dark Theme**: Sleek dark mode with purple/blue gradients
+- **Glassmorphism Design**: Modern glassmorphism cards and effects
+- **Responsive Layout**: Fully responsive design for all devices
+- **Real-Time Updates**: Live data synchronization
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🛠️ Technology Stack
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- **Frontend**: React 18, TypeScript, Vite
+- **UI Components**: Shadcn/ui, Tailwind CSS
+- **Backend**: Supabase (PostgreSQL, Edge Functions, Realtime)
+- **AI Services**: Google Gemini API, BFL Flux Kontext Pro
+- **Authentication**: Custom token-based system
+- **Deployment**: Vercel-ready
 
-Follow these steps:
+## 📦 Installation
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+- Supabase account
+- Google AI Studio account (for Gemini API)
+- BFL Flux account (for image generation)
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### 1. Clone the Repository
+```bash
+git clone <repository-url>
+cd agentic-ailtd
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+### 2. Install Dependencies
+```bash
+npm install
+```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### 3. Environment Setup
+Create a `.env.local` file in the project root:
+
+```env
+# Supabase Configuration
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+# Google Gemini API
+GEMINI_API_KEY=your_gemini_api_key
+
+# BFL Flux Kontext Pro API
+BFL_FLUX_API_KEY=your_bfl_api_key
+```
+
+### 4. Supabase Setup
+```bash
+# Install Supabase CLI
+npm install -g supabase
+
+# Login to Supabase
+npx supabase login
+
+# Link your project
+npx supabase link --project-ref your_project_ref
+
+# Set up secrets
+npx supabase secrets set GEMINI_API_KEY=your_gemini_api_key
+npx supabase secrets set BFL_FLUX_API_KEY=your_bfl_api_key
+
+# Deploy functions
+npx supabase functions deploy
+```
+
+### 5. Database Setup
+```bash
+# Apply migrations
+npx supabase db push
+```
+
+### 6. Start Development Server
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## 🔑 API Setup
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Google Gemini API
+1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Create an API key
+3. Add to `.env.local` and Supabase secrets
 
-**Use GitHub Codespaces**
+### BFL Flux Kontext Pro
+1. Go to [BFL Flux Dashboard](https://bfl.ml/)
+2. Generate an API key
+3. Add to `.env.local` and Supabase secrets
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🧪 Testing
 
-## What technologies are used for this project?
+Test your API connections:
+```bash
+npm run test:api
+```
 
-This project is built with:
+Expected output:
+```
+🚀 Starting API Connection Tests...
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+🔍 Testing Google Gemini API...
+✅ Gemini API connection successful!
+Response: Gemini API is working correctly
+Tokens used: 25
 
-## How can I deploy this project?
+🎨 Testing BFL Flux Kontext Pro API...
+✅ BFL Flux API connection successful!
+Image generated: 1 images
 
-Simply open [Lovable](https://lovable.dev/projects/b13dfec9-5674-477f-b967-206e8c764e3d) and click on Share -> Publish.
+🗄️ Testing Supabase Connection...
+✅ Supabase connection successful!
 
-## Can I connect a custom domain to my Lovable project?
+📊 Test Results Summary:
+========================
+Google Gemini API: ✅ PASS
+BFL Flux API: ✅ PASS
+Supabase Connection: ✅ PASS
 
-Yes, you can!
+Overall: 3/3 tests passed
+🎉 All API connections are working correctly!
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🚀 Usage
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### Admin Dashboard Access
+1. Navigate to `/admin` in your browser
+2. Login with:
+   - **Email**: `info@agentic-ai.ltd`
+   - **Password**: `agenticailtd`
+
+### Content Generation
+1. Go to the "AI Generator" tab
+2. Select content type (blog, page, service, resource)
+3. Enter target keywords
+4. Configure options (SEO focus, images, brand awareness)
+5. Click "Start AI Generation"
+6. Monitor real-time progress
+7. Preview and publish generated content
+
+### Content Management
+- **Preview**: Click the eye icon to preview content
+- **Publish**: Click the checkmark to publish content
+- **Track**: Monitor generation progress and status
+- **Analytics**: View usage statistics and performance
+
+## 📊 Dashboard Features
+
+### Statistics Cards
+- **Total Content**: Number of generated content pieces
+- **Active Requests**: Currently processing requests
+- **AI Usage**: Cost tracking for API usage
+- **Success Rate**: Content generation success percentage
+
+### Real-Time Features
+- **Live Sync**: Real-time data synchronization
+- **Activity Feed**: Live updates and notifications
+- **Progress Tracking**: Step-by-step generation progress
+- **Status Indicators**: Visual status indicators for all processes
+
+## 🔧 Configuration
+
+### Content Generation Settings
+- **Content Types**: Blog posts, landing pages, service pages, resource guides
+- **Content Length**: 1500+, 2500+, 3000+, 5000+ words
+- **SEO Optimization**: Automatic SEO optimization
+- **Image Generation**: Optional custom image generation
+- **Brand Awareness**: Company-specific content integration
+
+### AI Models Used
+- **Google Gemini 2.0 Flash Exp**: Primary content generation
+- **BFL Flux Kontext Pro**: High-quality image generation
+- **Custom Prompts**: Optimized for AI automation industry
+
+## 💰 Cost Optimization
+
+### Google Gemini API Pricing
+- **Gemini 2.0 Flash**: $0.0005 per 1M input tokens, $0.0015 per 1M output tokens
+- **Gemini 2.0 Flash Exp**: $0.0005 per 1M input tokens, $0.0015 per 1M output tokens
+- **Cost Effective**: Significantly cheaper than previous solutions
+
+### Usage Monitoring
+- Real-time cost tracking in dashboard
+- API usage logs and analytics
+- Cost optimization recommendations
+
+## 🚨 Troubleshooting
+
+### Common Issues
+1. **API Connection Failures**: Check API keys in `.env.local` and Supabase secrets
+2. **Function Deployment Issues**: Ensure Supabase CLI is properly configured
+3. **Database Connection**: Verify Supabase project settings
+4. **Authentication Issues**: Check admin credentials
+
+### Debug Steps
+1. Run `npm run test:api` to verify API connections
+2. Check Supabase function logs: `npx supabase functions logs`
+3. Verify environment variables are loaded correctly
+4. Check browser console for frontend errors
+
+## 🔒 Security
+
+- **API Key Management**: Secure storage in environment variables and Supabase secrets
+- **Authentication**: Token-based admin authentication
+- **Data Protection**: All sensitive data encrypted
+- **Access Control**: Admin-only dashboard access
+
+## 📈 Performance
+
+- **Real-Time Updates**: Live data synchronization
+- **Optimized Queries**: Efficient database queries
+- **Caching**: Smart caching for improved performance
+- **CDN Ready**: Optimized for global deployment
+
+## 🎯 Next Steps
+
+1. **Set up BFL Flux API key** for image generation
+2. **Configure custom branding** in the dashboard
+3. **Set up monitoring** for API usage and costs
+4. **Deploy to production** using Vercel or similar platform
+5. **Configure custom domains** and SSL certificates
+
+## 📞 Support
+
+For issues and questions:
+1. Check the troubleshooting section
+2. Review API documentation
+3. Check Supabase function logs
+4. Verify environment configuration
+
+---
+
+**Built with ❤️ for AI automation agencies**
