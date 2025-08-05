@@ -7,6 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, Calendar, User, ArrowRight, Search } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { useContent } from "@/hooks/useContent";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 
 const Blog = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -42,55 +44,40 @@ const Blog = () => {
     return tmp.textContent || tmp.innerText || "";
   };
 
+  const handleScheduleConsultation = () => {
+    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
+  };
+
   // If we have a slug, we're viewing a single post
   if (slug) {
     const post = blogPosts.find(p => p.slug === slug);
     
     if (!post) {
       return (
-        <div className="min-h-screen bg-background pt-24 px-4">
-          <div className="container mx-auto text-center">
-            <h1 className="text-4xl font-bold mb-4">Post Not Found</h1>
-            <p className="text-muted-foreground mb-8">The blog post you're looking for doesn't exist.</p>
-            <Link to="/blog">
-              <Button className="bg-gradient-primary hover:opacity-90">
-                Back to Blog
-              </Button>
-            </Link>
+        <div className="min-h-screen bg-background">
+          <Navigation />
+          <div className="pt-24 px-4">
+            <div className="container mx-auto text-center">
+              <h1 className="text-4xl font-bold mb-4">Post Not Found</h1>
+              <p className="text-muted-foreground mb-8">The blog post you're looking for doesn't exist.</p>
+              <Link to="/blog">
+                <Button className="bg-gradient-primary hover:opacity-90">
+                  Back to Blog
+                </Button>
+              </Link>
+            </div>
           </div>
+          <Footer />
         </div>
       );
     }
 
     return (
       <div className="min-h-screen bg-background">
-        {/* Navigation */}
-        <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border/40">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              <Link to="/" className="text-2xl font-bold">
-                <span className="bg-gradient-primary bg-clip-text text-transparent">
-                  Agentic AI AMRO Ltd
-                </span>
-              </Link>
-              <div className="hidden md:flex items-center space-x-8">
-                <Link to="/about" className="text-foreground/80 hover:text-foreground transition-colors">About</Link>
-                <Link to="/services" className="text-foreground/80 hover:text-foreground transition-colors">Services</Link>
-                <Link to="/case-studies" className="text-foreground/80 hover:text-foreground transition-colors">Case Studies</Link>
-                <Link to="/resources" className="text-foreground/80 hover:text-foreground transition-colors">Resources</Link>
-                <Link to="/contact" className="text-foreground/80 hover:text-foreground transition-colors">Contact</Link>
-              </div>
-              <Link to="/contact">
-                <Button className="bg-gradient-primary hover:opacity-90">
-                  Get Started
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </nav>
+        <Navigation />
 
         {/* Article Header */}
-        <section className="pt-32 pb-16 px-4">
+        <section className="pt-24 pb-16 px-4">
           <div className="container mx-auto max-w-4xl">
             <div className="mb-8">
               <Link to="/blog" className="text-primary hover:opacity-80 flex items-center gap-2">
@@ -167,11 +154,13 @@ const Blog = () => {
               Get expert guidance on implementing the AI strategies discussed in this article.
             </p>
             <div className="flex gap-4 justify-center">
-              <Link to="/contact">
-                <Button size="lg" className="bg-gradient-primary hover:opacity-90">
-                  Consult Our Experts
-                </Button>
-              </Link>
+              <Button 
+                size="lg" 
+                className="bg-gradient-primary hover:opacity-90"
+                onClick={handleScheduleConsultation}
+              >
+                Consult Our Experts
+              </Button>
               <Link to="/services">
                 <Button size="lg" variant="outline">
                   View Our Services
@@ -180,6 +169,7 @@ const Blog = () => {
             </div>
           </div>
         </section>
+        <Footer />
       </div>
     );
   }
@@ -187,33 +177,10 @@ const Blog = () => {
   // Blog listing page
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border/40">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="text-2xl font-bold">
-              <span className="bg-gradient-primary bg-clip-text text-transparent">
-                Agentic AI AMRO Ltd
-              </span>
-            </Link>
-            <div className="hidden md:flex items-center space-x-8">
-              <Link to="/about" className="text-foreground/80 hover:text-foreground transition-colors">About</Link>
-              <Link to="/services" className="text-foreground/80 hover:text-foreground transition-colors">Services</Link>
-              <Link to="/case-studies" className="text-foreground/80 hover:text-foreground transition-colors">Case Studies</Link>
-              <Link to="/resources" className="text-foreground/80 hover:text-foreground transition-colors">Resources</Link>
-              <Link to="/contact" className="text-foreground/80 hover:text-foreground transition-colors">Contact</Link>
-            </div>
-            <Link to="/contact">
-              <Button className="bg-gradient-primary hover:opacity-90">
-                Get Started
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navigation />
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4">
+      <section className="relative pt-24 pb-20 px-4">
         <div className="absolute inset-0 bg-gradient-hero opacity-10" />
         <div className="container mx-auto text-center relative z-10">
           <h1 className="text-5xl md:text-6xl font-heading font-bold mb-6">
@@ -330,12 +297,16 @@ const Blog = () => {
           </p>
           <div className="max-w-md mx-auto flex gap-2">
             <Input placeholder="Enter your email" className="flex-1" />
-            <Button className="bg-gradient-primary hover:opacity-90">
+            <Button 
+              className="bg-gradient-primary hover:opacity-90"
+              onClick={handleScheduleConsultation}
+            >
               Subscribe
             </Button>
           </div>
         </div>
       </section>
+      <Footer />
     </div>
   );
 };

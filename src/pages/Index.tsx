@@ -4,8 +4,17 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Brain, Zap, Shield, Users, Star, TrendingUp, Clock, DollarSign } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-ai-automation.jpg";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 
 const Index = () => {
+  const handleScheduleConsultation = () => {
+    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
+  };
+
+  const handleContactUs = () => {
+    window.location.href = "/contact";
+  };
   const stats = [
     { icon: TrendingUp, number: "500+", label: "AI Solutions Deployed" },
     { icon: Users, number: "150+", label: "Happy Clients" },
@@ -33,31 +42,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border/40">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">
-              <span className="bg-gradient-primary bg-clip-text text-transparent">
-                Agentic AI AMRO Ltd
-              </span>
-            </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <Link to="/about" className="text-foreground/80 hover:text-foreground transition-colors">About</Link>
-              <Link to="/services" className="text-foreground/80 hover:text-foreground transition-colors">Services</Link>
-              <Link to="/case-studies" className="text-foreground/80 hover:text-foreground transition-colors">Case Studies</Link>
-              <Link to="/resources" className="text-foreground/80 hover:text-foreground transition-colors">Resources</Link>
-              <Link to="/what-is-agentic-ai" className="text-foreground/80 hover:text-foreground transition-colors">What is Agentic AI</Link>
-              <Link to="/contact" className="text-foreground/80 hover:text-foreground transition-colors">Contact</Link>
-            </div>
-            <Link to="/contact">
-              <Button className="bg-gradient-primary hover:opacity-90">
-                Get Started
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navigation />
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4 overflow-hidden">
@@ -80,12 +65,14 @@ const Index = () => {
                 and deliver 340% ROI in 18 months.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <Link to="/contact">
-                  <Button size="lg" className="bg-gradient-primary hover:opacity-90">
-                    Start Your AI Journey
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
+                <Button 
+                  size="lg" 
+                  className="bg-gradient-primary hover:opacity-90"
+                  onClick={handleScheduleConsultation}
+                >
+                  Start Your AI Journey
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
                 <Link to="/case-studies">
                   <Button size="lg" variant="outline">
                     View Our Work
@@ -308,16 +295,20 @@ const Index = () => {
             Get started with a free consultation today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <Link to="/contact">
-              <Button size="lg" className="bg-gradient-primary hover:opacity-90">
-                Start Your AI Journey
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-            <Button size="lg" variant="outline">
-              <a href="https://calendly.com/vikram-agentic-ai/30min" target="_blank" rel="noopener noreferrer">
-                Schedule Consultation
-              </a>
+            <Button 
+              size="lg" 
+              className="bg-gradient-primary hover:opacity-90"
+              onClick={handleScheduleConsultation}
+            >
+              Start Your AI Journey
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline"
+              onClick={handleContactUs}
+            >
+              Contact Us
             </Button>
           </div>
           <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
@@ -327,6 +318,7 @@ const Index = () => {
           </div>
         </div>
       </section>
+      <Footer />
     </div>
   );
 };

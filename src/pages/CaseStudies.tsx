@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, Clock, DollarSign, Users, Star, ArrowRight } from "lucide-react";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 
 const CaseStudies = () => {
   const mainCaseStudy = {
@@ -69,8 +71,17 @@ const CaseStudies = () => {
     }
   ];
 
+  const handleScheduleConsultation = () => {
+    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
+  };
+
+  const handleStartProject = () => {
+    window.location.href = "/contact";
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <Navigation />
       {/* Hero Section */}
       <section className="relative py-24 px-4">
         <div className="absolute inset-0 bg-gradient-hero opacity-10" />
@@ -292,15 +303,24 @@ const CaseStudies = () => {
             Join our growing list of successful clients and see how AI can transform your business.
           </p>
           <div className="flex gap-4 justify-center">
-            <Button size="lg" className="bg-gradient-primary hover:opacity-90">
+            <Button 
+              size="lg" 
+              className="bg-gradient-primary hover:opacity-90"
+              onClick={handleStartProject}
+            >
               Start Your Project
             </Button>
-            <Button size="lg" variant="outline">
+            <Button 
+              size="lg" 
+              variant="outline"
+              onClick={handleScheduleConsultation}
+            >
               Schedule Consultation
             </Button>
           </div>
         </div>
       </section>
+      <Footer />
     </div>
   );
 };

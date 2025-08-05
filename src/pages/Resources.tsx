@@ -14,6 +14,8 @@ import {
   Star,
   ArrowRight
 } from "lucide-react";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 
 const Resources = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -138,8 +140,17 @@ const Resources = () => {
     guide.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleScheduleConsultation = () => {
+    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
+  };
+
+  const handleViewServices = () => {
+    window.location.href = "/services";
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <Navigation />
       {/* Hero Section */}
       <section className="relative py-24 px-4">
         <div className="absolute inset-0 bg-gradient-hero opacity-10" />
@@ -341,15 +352,24 @@ const Resources = () => {
             Our team of experts can help you implement the strategies outlined in these resources.
           </p>
           <div className="flex gap-4 justify-center">
-            <Button size="lg" className="bg-gradient-primary hover:opacity-90">
+            <Button 
+              size="lg" 
+              className="bg-gradient-primary hover:opacity-90"
+              onClick={handleScheduleConsultation}
+            >
               Consult Our Experts
             </Button>
-            <Button size="lg" variant="outline">
+            <Button 
+              size="lg" 
+              variant="outline"
+              onClick={handleViewServices}
+            >
               View Our Services
             </Button>
           </div>
         </div>
       </section>
+      <Footer />
     </div>
   );
 };

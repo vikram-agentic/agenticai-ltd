@@ -17,6 +17,8 @@ import {
   Home,
   GraduationCap
 } from "lucide-react";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 
 const Services = () => {
   const mainServices = [
@@ -96,8 +98,17 @@ const Services = () => {
     "AWS SageMaker", "Docker", "Kubernetes", "API Integration", "Real-time Processing"
   ];
 
+  const handleScheduleConsultation = () => {
+    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
+  };
+
+  const handleViewCaseStudies = () => {
+    window.location.href = "/case-studies";
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <Navigation />
       {/* Hero Section */}
       <section className="relative py-24 px-4">
         <div className="absolute inset-0 bg-gradient-hero opacity-10" />
@@ -111,7 +122,11 @@ const Services = () => {
             Transform your business with our comprehensive AI automation services. 
             From custom AI development to industry-specific solutions.
           </p>
-          <Button size="lg" className="bg-gradient-primary hover:opacity-90">
+          <Button 
+            size="lg" 
+            className="bg-gradient-primary hover:opacity-90"
+            onClick={handleScheduleConsultation}
+          >
             Get Started Today
           </Button>
         </div>
@@ -155,7 +170,10 @@ const Services = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button className="w-full mt-6 bg-gradient-primary hover:opacity-90">
+                  <Button 
+                    className="w-full mt-6 bg-gradient-primary hover:opacity-90"
+                    onClick={handleScheduleConsultation}
+                  >
                     Learn More
                   </Button>
                 </CardContent>
@@ -264,15 +282,24 @@ const Services = () => {
             Get a free consultation and discover how AI can transform your business operations.
           </p>
           <div className="flex gap-4 justify-center">
-            <Button size="lg" className="bg-gradient-primary hover:opacity-90">
+            <Button 
+              size="lg" 
+              className="bg-gradient-primary hover:opacity-90"
+              onClick={handleScheduleConsultation}
+            >
               Free Consultation
             </Button>
-            <Button size="lg" variant="outline">
+            <Button 
+              size="lg" 
+              variant="outline"
+              onClick={handleViewCaseStudies}
+            >
               View Case Studies
             </Button>
           </div>
         </div>
       </section>
+      <Footer />
     </div>
   );
 };

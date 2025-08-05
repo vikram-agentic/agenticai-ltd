@@ -15,6 +15,8 @@ import {
   Send,
   CheckCircle
 } from "lucide-react";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -31,6 +33,10 @@ const Contact = () => {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleScheduleConsultation = () => {
+    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -115,6 +121,7 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navigation />
       {/* Hero Section */}
       <section className="relative py-24 px-4">
         <div className="absolute inset-0 bg-gradient-hero opacity-10" />
@@ -286,7 +293,10 @@ const Contact = () => {
                   <p className="text-muted-foreground mb-4">
                     Book a 30-minute call to discuss your AI needs and get expert advice.
                   </p>
-                  <Button className="w-full bg-gradient-primary hover:opacity-90">
+                  <Button 
+                    className="w-full bg-gradient-primary hover:opacity-90"
+                    onClick={handleScheduleConsultation}
+                  >
                     Book on Calendly
                   </Button>
                 </CardContent>
@@ -396,6 +406,7 @@ const Contact = () => {
           </div>
         </div>
       </section>
+      <Footer />
     </div>
   );
 };
