@@ -225,13 +225,6 @@ const AIConsultingSupport = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button 
-                    className="w-full mt-6" 
-                    variant="outline"
-                    onClick={() => navigate('/support-options')}
-                  >
-                    Learn More
-                  </Button>
                 </CardContent>
               </Card>
             ))}
@@ -417,13 +410,6 @@ const AIConsultingSupport = () => {
                     <h4 className="font-semibold text-sm">Focus Areas:</h4>
                     <p className="text-sm text-muted-foreground">{program.focus}</p>
                   </div>
-                  <Button 
-                    className="w-full" 
-                    variant="outline"
-                    onClick={handleScheduleConsultation}
-                  >
-                    Learn More
-                  </Button>
                 </CardContent>
               </Card>
             ))}
