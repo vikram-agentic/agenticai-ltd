@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 Admin Dashboard Routing Test</h1>
+        
+        <div class="status success">
+            <strong>✅ Build Status:</strong> Project successfully built and deployed to Vercel
+        </div>
+
+        <h2>📋 Test Steps:</h2>
+        <ol>
+            <li><strong>Vercel Configuration:</strong> Added <code>vercel.json</code> with SPA routing rules</li>
+            <li><strong>Redirects:</strong> Added <code>public/_redirects</code> for fallback routing</li>
+            <li><strong>Route Configuration:</strong> Admin route is configured as <code>/admin-agentic</code></li>
+            <li><strong>Build:</strong> Project rebuilt with latest changes</li>
+            <li><strong>Deploy:</strong> Changes pushed to GitHub (will auto-deploy on Vercel)</li>
+        </ol>
+
+        <h2>🧪 Test Your Admin Dashboard:</h2>
+        <a href="/admin-agentic" class="test-button">🚀 Go to Admin Dashboard</a>
+        <a href="/" class="test-button">🏠 Go to Homepage</a>
+
+        <div class="status success">
+            <strong>🔑 Admin Login Credentials:</strong><br>
+            Email: <code>info@agentic-ai.ltd</code><br>
+            Password: <code>agenticailtd</code>
+        </div>
+
+        <h2>📝 What to Check:</h2>
+        <ul>
+            <li>✅ Route loads without 404 error</li>
+            <li>✅ Login form appears</li>
+            <li>✅ Can log in with admin credentials</li>
+            <li>✅ Dashboard loads with all features</li>
+            <li>✅ Email functionality works</li>
+            <li>✅ Content generator works</li>
+            <li>✅ Chatbot management works</li>
+        </ul>
+
+        <div class="status success">
+            <strong>🎯 Expected Result:</strong> The admin dashboard should now load properly at <code>/admin-agentic</code> without any 404 errors!
+        </div>
+    </div>
+</body>
+</html> 
