@@ -1,0 +1,20 @@
+{
+  "name": "content-generator-agent",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/genai": "^1.13.0",
+    "@supabase/supabase-js": "^2.39.3",
+    "mime": "^4.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.16"
+  }
+}

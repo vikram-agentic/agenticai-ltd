@@ -1,10 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, TrendingUp, Users, Clock } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { useNavigate } from "react-router-dom";
+import { MeetingBookingModal } from "@/components/MeetingBookingModal";
+import { Button } from "@/components/ui/button";
 
 const Portfolio = () => {
   const navigate = useNavigate();
@@ -154,14 +155,15 @@ const Portfolio = () => {
                     View Detailed Case Study
                   </Button>
                 ) : (
-                  <Button 
-                    variant="outline" 
+                  <MeetingBookingModal 
+                    triggerText="Discuss Similar Project"
+                    triggerVariant="outline"
                     className="w-full"
-                    onClick={() => window.open('https://calendly.com/agentic-ai/30min', '_blank')}
+                    serviceType={project.title}
                   >
                     <Users className="h-4 w-4 mr-2" />
                     Discuss Similar Project
-                  </Button>
+                  </MeetingBookingModal>
                 )}
               </CardContent>
             </Card>
@@ -177,12 +179,11 @@ const Portfolio = () => {
                 Let's discuss how we can create a custom AI solution that delivers similar results for your business.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  size="lg"
-                  onClick={() => window.open('https://calendly.com/agentic-ai/30min', '_blank')}
-                >
-                  Start Your Project
-                </Button>
+                <MeetingBookingModal 
+                  triggerText="Start Your Project"
+                  triggerSize="lg"
+                  serviceType="Portfolio Inquiry"
+                />
                 <Button 
                   size="lg" 
                   variant="outline"

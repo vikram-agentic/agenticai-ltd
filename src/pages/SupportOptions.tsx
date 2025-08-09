@@ -1,10 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, MessageCircle, Phone, Clock, Zap, Shield, Users } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { useNavigate } from "react-router-dom";
+import { MeetingBookingModal } from "@/components/MeetingBookingModal";
+import { Button } from "@/components/ui/button";
 
 const SupportOptions = () => {
   const navigate = useNavigate();
@@ -165,13 +166,12 @@ const SupportOptions = () => {
                   ))}
                 </div>
 
-                <Button 
+                <MeetingBookingModal 
+                  triggerText="Get Started"
+                  triggerVariant={tier.popular ? "default" : "outline"}
                   className="w-full"
-                  variant={tier.popular ? "default" : "outline"}
-                  onClick={() => window.open('https://calendly.com/agentic-ai/30min', '_blank')}
-                >
-                  Get Started
-                </Button>
+                  serviceType={tier.name}
+                />
               </CardContent>
             </Card>
           ))}
@@ -222,12 +222,12 @@ const SupportOptions = () => {
                 Our support specialists will help you select the perfect support plan for your business needs.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  size="lg"
-                  onClick={() => window.open('https://calendly.com/agentic-ai/30min', '_blank')}
-                >
-                  Schedule Consultation
-                </Button>
+                <MeetingBookingModal 
+                  triggerText="Schedule Consultation"
+                  triggerVariant="default"
+                  triggerSize="lg"
+                  serviceType="General Inquiry"
+                />
                 <Button 
                   size="lg" 
                   variant="outline"

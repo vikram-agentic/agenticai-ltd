@@ -1,10 +1,13 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { GoogleGenAI } from "https://esm.sh/@google/genai@0.21.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -14,7 +17,6 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
 
     if (!geminiApiKey) {
       throw new Error('GEMINI_API_KEY is not configured');
@@ -22,36 +24,50 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { keywords, requestId } = await req.json();
+    const { requestId, keywords, industry, targetAudience, contentType } = await req.json();
 
-    if (!keywords || !requestId) {
-      throw new Error('Missing required fields: keywords and requestId');
+    if (!keywords || keywords.length === 0) {
+      throw new Error('Missing required field: keywords');
     }
 
     console.log('Starting comprehensive keyword research for:', keywords);
 
-    // Update request status
-    await supabase
-      .from('content_requests')
-      .update({ status: 'researching', progress: 10 })
-      .eq('id', requestId);
+    // Get website context for brand awareness
+    const { data: contextData } = await supabase
+      .from('website_context')
+      .select('*')
+      .eq('is_active', true);
 
-    // Step 1: Primary Keyword Research with Gemini
-    console.log('Conducting primary keyword research...');
-    
-    const primaryKeyword = Array.isArray(keywords) ? keywords[0] : keywords;
-    
-    const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${geminiApiKey}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const companyInfo = contextData?.find(c => c.context_type === 'company_info')?.content || {};
+
+    // Comprehensive keyword research using Gemini 2.5 Pro with Google Search
+    const ai = new GoogleGenAI({
+      apiKey: geminiApiKey,
+    });
+
+    const tools = [
+      { urlContext: {} },
+      {
+        googleSearch: {
+        }
       },
-      body: JSON.stringify({
-        contents: [
+    ];
+
+    const config = {
+      temperature: 1.2,
+      thinkingConfig: {
+        thinkingBudget: -1,
+      },
+      tools,
+    };
+
+    const model = 'gemini-2.5-pro';
+    const contents = [
+      {
+        role: 'user',
+        parts: [
           {
-            parts: [
-              {
-                text: `You are an expert SEO keyword research specialist with 15+ years of experience in digital marketing and search engine optimization. Your expertise includes understanding search intent, competition analysis, keyword difficulty assessment, and trend identification across all industries.
+            text: `You are an expert SEO keyword research specialist with 15+ years of experience in digital marketing and search engine optimization. Your expertise includes understanding search intent, competition analysis, keyword difficulty assessment, and trend identification across all industries.
 
 Your primary objective is to conduct comprehensive keyword research that identifies high-opportunity keywords with optimal search volume, manageable competition, and strong commercial intent.
 
@@ -64,6 +80,16 @@ Your primary objective is to conduct comprehensive keyword research that identif
 6. **Competitor Gap Analysis**: Identify keywords your competitors rank for but you don't
 7. **Seasonal/Trending Keywords**: Discover time-sensitive and trending keyword opportunities
 
+### Company Context:
+- Name: ${companyInfo.name || 'Agentic AI AMRO Ltd'}
+- Industry: ${companyInfo.industry || industry || 'AI Automation & Custom AI Solutions'}
+- Target Audience: ${targetAudience || 'Business owners, CTOs, and decision-makers seeking AI automation'}
+
+### Research Parameters:
+- Seed Keywords: ${keywords.join(', ')}
+- Content Type: ${contentType || 'blog'}
+- Industry Focus: ${industry || 'AI Automation'}
+
 ### Required Analysis for Each Keyword:
 - Monthly search volume (provide ranges: 0-100, 100-1K, 1K-10K, 10K-100K, 100K+)
 - Keyword difficulty score (1-100 scale)
@@ -74,8 +100,92 @@ Your primary objective is to conduct comprehensive keyword research that identif
 - Content gap opportunities
 
 ### Output Format:
-Provide results in a structured table format with the following columns:
-| Keyword | Search Volume | Keyword Difficulty | Search Intent | Competition | Trend | Opportunity Score |
+Provide results in structured JSON format with comprehensive keyword categorization:
+
+{
+  "primaryKeyword": {
+    "keyword": "main target keyword",
+    "searchVolume": "1K-10K",
+    "difficulty": 45,
+    "intent": "commercial",
+    "competition": "medium",
+    "trend": "rising",
+    "opportunityScore": 85
+  },
+  "semanticKeywords": [
+    {
+      "keyword": "semantic variation 1",
+      "searchVolume": "100-1K",
+      "difficulty": 35,
+      "intent": "informational",
+      "competition": "low",
+      "trend": "stable",
+      "opportunityScore": 75
+    }
+  ],
+  "longTailKeywords": [
+    {
+      "keyword": "specific long tail phrase",
+      "searchVolume": "100-1K",
+      "difficulty": 25,
+      "intent": "transactional",
+      "competition": "low",
+      "trend": "rising",
+      "opportunityScore": 90
+    }
+  ],
+  "questionKeywords": [
+    {
+      "keyword": "how to [topic question]",
+      "searchVolume": "100-1K",
+      "difficulty": 30,
+      "intent": "informational",
+      "competition": "medium",
+      "trend": "stable",
+      "opportunityScore": 80
+    }
+  ],
+  "commercialKeywords": [
+    {
+      "keyword": "best [product/service]",
+      "searchVolume": "1K-10K",
+      "difficulty": 55,
+      "intent": "commercial",
+      "competition": "high",
+      "trend": "stable",
+      "opportunityScore": 70
+    }
+  ],
+  "trendingKeywords": [
+    {
+      "keyword": "trending topic keyword",
+      "searchVolume": "1K-10K",
+      "difficulty": 40,
+      "intent": "informational",
+      "competition": "medium",
+      "trend": "rising",
+      "opportunityScore": 85
+    }
+  ],
+  "contentAngles": [
+    "Ultimate guide to [primary keyword]",
+    "How to implement [primary keyword] in 2024",
+    "[Primary keyword] vs alternatives comparison",
+    "Common [primary keyword] mistakes to avoid"
+  ],
+  "keywordClusters": [
+    {
+      "clusterName": "Implementation Cluster",
+      "keywords": ["keyword1", "keyword2", "keyword3"],
+      "contentOpportunity": "How-to guide focusing on implementation"
+    }
+  ],
+  "featuredSnippetOpportunities": [
+    "What is [primary keyword]",
+    "How does [primary keyword] work",
+    "[Primary keyword] benefits"
+  ]
+}
 
 ### Additional Requirements:
 - Prioritize keywords based on a calculated opportunity score (search volume ÷ keyword difficulty)
@@ -84,246 +194,137 @@ Provide results in a structured table format with the following columns:
 - Identify featured snippet opportunities
 - Suggest related topics for content hub creation
 
-When provided with a seed keyword or topic, conduct this comprehensive analysis and present actionable insights for content strategy development.
+Focus on finding keywords that Agentic AI AMRO Ltd can realistically rank for while driving qualified traffic and potential conversions. Consider the company's expertise in AI automation and custom AI solutions when evaluating keyword opportunities.
 
-Conduct comprehensive keyword research for the seed keyword: "${primaryKeyword}".
-
-Company Context: Agentic AI AMRO Ltd - AI Automation & Custom AI Solutions
-Focus Areas: AI automation, machine learning, business intelligence, custom AI development, AI agents, process automation
-
-Provide results in the following JSON structure:
-{
-  "primaryKeywords": [
-    {
-      "keyword": "example keyword",
-      "searchVolume": "1K-10K",
-      "difficulty": 65,
-      "intent": "informational",
-      "competition": "medium",
-      "trend": "rising",
-      "opportunityScore": 8.5,
-      "cpc": 2.50,
-      "relatedTopics": ["topic1", "topic2"]
-    }
-  ],
-  "longTailKeywords": [
-    {
-      "keyword": "long tail example",
-      "searchVolume": "100-1K",
-      "difficulty": 35,
-      "intent": "commercial",
-      "competition": "low",
-      "opportunityScore": 9.2
-    }
-  ],
-  "questionKeywords": [
-    {
-      "keyword": "how to example",
-      "searchVolume": "500-1K",
-      "difficulty": 25,
-      "intent": "informational",
-      "opportunityScore": 8.8
-    }
-  ],
-  "commercialKeywords": [
-    {
-      "keyword": "best example tool",
-      "searchVolume": "1K-5K",
-      "difficulty": 45,
-      "intent": "commercial",
-      "opportunityScore": 7.5
-    }
-  ],
-  "relatedTopics": ["topic1", "topic2", "topic3"],
-  "contentAngles": ["angle1", "angle2", "angle3"],
-  "searchIntent": {
-    "informational": 40,
-    "commercial": 35,
-    "transactional": 25
-  },
-  "competitionAnalysis": {
-    "lowCompetition": 15,
-    "mediumCompetition": 45,
-    "highCompetition": 40
-  }
-}
-
-Focus on AI automation, business intelligence, and enterprise AI solutions keywords related to "${primaryKeyword}". Prioritize keywords that align with Agentic AI AMRO Ltd's services and expertise.`
-              }
-            ]
+**IMPORTANT**: Use Google Search to research current search trends, competition analysis, and real-time keyword data for the seed keywords: ${keywords.join(', ')}. This will help you provide more accurate search volume estimates and identify trending opportunities.`
           }
-        ],
-        generationConfig: {
-          temperature: 0.2,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 3000,
-        }
-      }),
-    });
-
-    if (!geminiResponse.ok) {
-      throw new Error(`Gemini API error: ${geminiResponse.statusText}`);
-    }
-
-    const geminiData = await geminiResponse.json();
-    const keywordData = geminiData.candidates[0].content.parts[0].text;
-
-    // Step 2: SERP Analysis for top keywords
-    console.log('Analyzing SERP for top keywords...');
-    
-    const serpAnalysisResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${geminiApiKey}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: `You are an expert SEO analyst specializing in SERP analysis for AI automation and business intelligence keywords.
-
-Analyze the search engine results for the keyword: "${primaryKeyword}".
-
-Provide SERP analysis in JSON format:
-{
-  "serpFeatures": {
-    "featuredSnippets": ["snippet1", "snippet2"],
-    "peopleAlsoAsk": ["question1", "question2", "question3"],
-    "relatedSearches": ["search1", "search2"],
-    "knowledgeGraph": "present/absent"
-  },
-  "topCompetitors": [
-    {
-      "domain": "competitor.com",
-      "title": "Competitor Title",
-      "strengths": ["strength1", "strength2"],
-      "weaknesses": ["weakness1", "weakness2"],
-      "contentGaps": ["gap1", "gap2"]
-    }
-  ],
-  "contentOpportunities": [
-    {
-      "opportunity": "opportunity description",
-      "keyword": "related keyword",
-      "difficulty": 45,
-      "potential": "high/medium/low"
-    }
-  ],
-  "rankingFactors": {
-    "contentLength": "average word count",
-    "backlinks": "average domain authority",
-    "userIntent": "primary intent type",
-    "contentType": "blog/article/guide"
-  }
-}
-
-Focus on identifying content gaps and opportunities for Agentic AI AMRO Ltd to rank for "${primaryKeyword}".`
-              }
-            ]
-          }
-        ],
-        generationConfig: {
-          temperature: 0.3,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 2000,
-        }
-      }),
-    });
-
-    if (!serpAnalysisResponse.ok) {
-      throw new Error(`Gemini SERP API error: ${serpAnalysisResponse.statusText}`);
-    }
-
-    const serpData = await serpAnalysisResponse.json();
-    const serpAnalysis = serpData.candidates[0].content.parts[0].text;
-
-    // Log API usage for both calls
-    await supabase.from('api_usage_logs').insert([
-      {
-        service_name: 'gemini',
-        endpoint: 'generateContent',
-        tokens_used: geminiData.usageMetadata?.totalTokenCount || 0,
-        cost_usd: (geminiData.usageMetadata?.totalTokenCount || 0) * 0.0000005, // Gemini pricing
-        request_data: { primaryKeyword, model: 'gemini-2.0-flash-exp', type: 'keyword_research' },
-        response_data: { keywordData },
-        success: true
-      },
-      {
-        service_name: 'gemini',
-        endpoint: 'generateContent',
-        tokens_used: serpData.usageMetadata?.totalTokenCount || 0,
-        cost_usd: (serpData.usageMetadata?.totalTokenCount || 0) * 0.0000005, // Gemini pricing
-        request_data: { primaryKeyword, model: 'gemini-2.0-flash-exp', type: 'serp_analysis' },
-        response_data: { serpAnalysis },
-        success: true
+        ]
       }
-    ]);
+    ];
 
-    // Parse and store keyword research results
+    const response = await ai.models.generateContentStream({
+      model,
+      config,
+      contents,
+    });
+
+    let keywordContent = '';
+    for await (const chunk of response) {
+      if (chunk.text) {
+        keywordContent += chunk.text;
+      }
+    }
+
     let parsedKeywords;
     try {
-      parsedKeywords = JSON.parse(keywordData);
+      // Try to extract JSON from the response
+      const jsonMatch = keywordContent.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        parsedKeywords = JSON.parse(jsonMatch[0]);
+      } else {
+        throw new Error('No JSON found in response');
+      }
     } catch (e) {
+      console.error('Error parsing keyword research JSON:', e);
+      // Fallback structured response
       parsedKeywords = {
-        primaryKeywords: [{ keyword: primaryKeyword, searchVolume: "1K-10K", difficulty: 50, intent: "informational" }],
-        longTailKeywords: [],
-        questionKeywords: [],
-        commercialKeywords: [],
-        relatedTopics: [],
-        contentAngles: []
-      };
-    }
-
-    let parsedSerp;
-    try {
-      parsedSerp = JSON.parse(serpAnalysis);
-    } catch (e) {
-      parsedSerp = {
-        serpFeatures: {},
-        topCompetitors: [],
-        contentOpportunities: [],
-        rankingFactors: {}
-      };
-    }
-
-    // Store results in database
-    const { data: keywordRecord } = await supabase
-      .from('keywords_research')
-      .insert({
-        request_id: requestId,
-        seed_keyword: primaryKeyword,
-        keywords: parsedKeywords,
-        serp_analysis: parsedSerp,
-        search_volume_data: {
-          totalKeywords: Object.values(parsedKeywords).flat().length,
-          averageDifficulty: 45,
-          topOpportunities: parsedKeywords.primaryKeywords?.slice(0, 5) || []
+        primaryKeyword: {
+          keyword: keywords[0],
+          searchVolume: "1K-10K",
+          difficulty: 45,
+          intent: "commercial",
+          competition: "medium",
+          trend: "stable",
+          opportunityScore: 75
         },
-        competition_analysis: {
-          lowCompetition: parsedKeywords.longTailKeywords?.length || 0,
-          mediumCompetition: parsedKeywords.primaryKeywords?.length || 0,
-          highCompetition: parsedKeywords.commercialKeywords?.length || 0
-        }
-      })
-      .select()
-      .single();
+        semanticKeywords: keywords.map((kw, i) => ({
+          keyword: `${kw} automation`,
+          searchVolume: "100-1K",
+          difficulty: 35,
+          intent: "informational",
+          competition: "low",
+          trend: "stable",
+          opportunityScore: 80 - (i * 5)
+        })),
+        longTailKeywords: keywords.map(kw => ({
+          keyword: `how to implement ${kw} for business`,
+          searchVolume: "100-1K",
+          difficulty: 25,
+          intent: "informational",
+          competition: "low",
+          trend: "rising",
+          opportunityScore: 85
+        })),
+        questionKeywords: [
+          {
+            keyword: `what is ${keywords[0]}`,
+            searchVolume: "1K-10K",
+            difficulty: 30,
+            intent: "informational",
+            competition: "medium",
+            trend: "stable",
+            opportunityScore: 80
+          }
+        ],
+        commercialKeywords: [
+          {
+            keyword: `best ${keywords[0]} solutions`,
+            searchVolume: "1K-10K",
+            difficulty: 55,
+            intent: "commercial",
+            competition: "high",
+            trend: "stable",
+            opportunityScore: 70
+          }
+        ],
+        trendingKeywords: [],
+        contentAngles: [
+          `Ultimate ${keywords[0]} Guide for 2024`,
+          `How to Choose the Right ${keywords[0]} Solution`,
+          `${keywords[0]} Implementation Best Practices`
+        ],
+        keywordClusters: [],
+        featuredSnippetOpportunities: [
+          `What is ${keywords[0]}`,
+          `How does ${keywords[0]} work`,
+          `${keywords[0]} benefits for business`
+        ]
+      };
+    }
 
-    // Update request progress
-    await supabase
-      .from('content_requests')
-      .update({ status: 'researching', progress: 25 })
-      .eq('id', requestId);
+    // Update content request with keyword research results
+    if (requestId) {
+      await supabase
+        .from('content_requests')
+        .update({
+          progress: 25,
+          status: 'processing',
+          keyword_research: parsedKeywords
+        })
+        .eq('id', requestId);
+    }
+
+    // Log API usage
+    await supabase.from('api_usage_logs').insert({
+      service_name: 'gemini-2.5-pro',
+      endpoint: 'keyword-research',
+      tokens_used: keywordContent.length, // Approximate token count
+      cost_usd: (keywordContent.length / 4) * 0.000001, // Gemini 2.5 Pro pricing estimate
+      request_data: { keywords, industry, contentType, model: 'gemini-2.5-pro' },
+      response_data: { 
+        total_keywords: Object.values(parsedKeywords).flat().length,
+        primary_keyword: parsedKeywords.primaryKeyword?.keyword 
+      },
+      success: true
+    });
 
     console.log('Keyword research completed successfully');
 
     return new Response(JSON.stringify({
       success: true,
-      keywordData: keywordRecord,
-      primaryKeyword: primaryKeyword,
-      message: 'Comprehensive keyword research completed successfully'
+      keywords: parsedKeywords,
+      primaryKeyword: parsedKeywords.primaryKeyword?.keyword || keywords[0],
+      message: 'Comprehensive keyword research completed'
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -337,8 +338,8 @@ Focus on identifying content gaps and opportunities for Agentic AI AMRO Ltd to r
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     await supabase.from('api_usage_logs').insert({
-      service_name: 'gemini',
-      endpoint: 'generateContent',
+      service_name: 'gemini-2.5-pro',
+      endpoint: 'keyword-research',
       success: false,
       error_message: error.message
     });

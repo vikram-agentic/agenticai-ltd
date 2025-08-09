@@ -1,18 +1,15 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle, ArrowRight, Brain, Code, Zap, Shield, Users, TrendingUp } from "lucide-react";
+import { MeetingBookingModal } from "@/components/MeetingBookingModal";
+import { Button } from "@/components/ui/button";
 
 const CustomAIDevelopment = () => {
   const navigate = useNavigate();
-
-  const handleScheduleConsultation = () => {
-    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
-  };
 
   const handleContactUs = () => {
     navigate("/contact");
@@ -73,14 +70,15 @@ const CustomAIDevelopment = () => {
             From concept to deployment, we build tailored AI solutions that solve your unique business challenges and drive measurable results.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              onClick={handleScheduleConsultation}
+            <MeetingBookingModal 
+              triggerText="Start Your AI Project"
+              triggerSize="lg"
               className="bg-gradient-primary hover:opacity-90"
+              serviceType="Custom AI Development"
             >
               Start Your AI Project
               <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            </MeetingBookingModal>
             <Button 
               size="lg" 
               variant="outline" 
@@ -252,13 +250,12 @@ const CustomAIDevelopment = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button 
+                  <MeetingBookingModal 
+                    triggerText="Get Started"
                     className="w-full mt-6"
-                    variant={tier.popular ? "default" : "outline"}
-                    onClick={handleScheduleConsultation}
-                  >
-                    Get Started
-                  </Button>
+                    triggerVariant={tier.popular ? "default" : "outline"}
+                    serviceType={tier.name}
+                  />
                 </CardContent>
               </Card>
             ))}
@@ -274,13 +271,12 @@ const CustomAIDevelopment = () => {
             Let's discuss your AI project and create a solution that transforms your business.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg"
-              variant="secondary"
-              onClick={handleScheduleConsultation}
-            >
-              Schedule Free Consultation
-            </Button>
+            <MeetingBookingModal 
+              triggerText="Schedule Free Consultation"
+              triggerSize="lg"
+              triggerVariant="secondary"
+              serviceType="Custom AI Development"
+            />
             <Button 
               size="lg"
               variant="outline"

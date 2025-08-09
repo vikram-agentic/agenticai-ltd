@@ -1,0 +1,86 @@
+[
+  {
+    "title": "Agentic AI Workflow Methodology Document",
+    "description": "12-Step Implementation Methodology for Autonomous Business Processes. Complete framework for enterprise leaders to implement agentic AI workflows from strategic alignment to continuous optimization.",
+    "category": "Methodology",
+    "downloadUrl": "/resources/Agentic AI Workflow Methodology Document.md",
+    "viewUrl": "/resources/agentic-workflow-methodology",
+    "type": "Guide",
+    "pages": 92,
+    "readTime": "45 min",
+    "difficulty": "Advanced",
+    "tags": ["Agentic AI", "Workflow Automation", "Enterprise Implementation", "Business Process"]
+  },
+  {
+    "title": "Healthcare AI Compliance Masterclass",
+    "description": "HIPAA, FDA & GDPR Navigation Guide for Medical AI Systems. Comprehensive compliance framework for healthcare organizations implementing AI solutions while meeting regulatory requirements.",
+    "category": "Compliance",
+    "downloadUrl": "/resources/AI Healthcare Compliance Document Generation.md",
+    "viewUrl": "/resources/healthcare-ai-compliance",
+    "type": "Guide",
+    "pages": 115,
+    "readTime": "60 min",
+    "difficulty": "Advanced",
+    "tags": ["HIPAA", "FDA", "GDPR", "Healthcare AI", "Compliance"]
+  },
+  {
+    "title": "Enterprise AI Governance & Compliance Framework",
+    "description": "GDPR, HIPAA & EU AI Act Implementation Guide. Unified compliance framework addressing multiple major AI regulations with practical risk assessment methodologies and audit procedures.",
+    "category": "Governance",
+    "downloadUrl": "/resources/ai-governance-compliance-framework.md",
+    "viewUrl": "/resources/ai-governance-framework",
+    "type": "Framework",
+    "pages": 189,
+    "readTime": "40 min",
+    "difficulty": "Advanced",
+    "tags": ["AI Governance", "GDPR", "EU AI Act", "Risk Management", "Compliance"]
+  },
+  {
+    "title": "Enterprise AI Governance & Compliance Masterclass",
+    "description": "Advanced governance strategies for AI implementation across global jurisdictions. Includes real-time 2024 data and case studies with proprietary tools and checklists from 500+ implementations.",
+    "category": "Masterclass",
+    "downloadUrl": "/resources/Enterprise AI Governance & Compliance Masterclass.md",
+    "viewUrl": "/resources/ai-governance-masterclass",
+    "type": "Masterclass",
+    "pages": 156,
+    "readTime": "50 min",
+    "difficulty": "Expert",
+    "tags": ["AI Ethics", "Enterprise Governance", "Legal Frameworks", "Cross-jurisdiction"]
+  },
+  {
+    "title": "Enterprise AI Skills Gap Assessment Toolkit",
+    "description": "Workforce Planning Strategies for the AI Era. Comprehensive toolkit for HR executives and learning leaders with strategies to assess and bridge the AI skills gap affecting modern organizations.",
+    "category": "Workforce",
+    "downloadUrl": "/resources/enterprise_ai_skills_gap_assessment_toolkit.md",
+    "viewUrl": "/resources/ai-skills-gap-toolkit",
+    "type": "Toolkit",
+    "pages": 78,
+    "readTime": "35 min",
+    "difficulty": "Intermediate",
+    "tags": ["HR", "Skills Assessment", "Workforce Planning", "AI Training"]
+  },
+  {
+    "title": "Financial Services AI Risk Framework",
+    "description": "Algorithmic Auditing & Bias Detection for Banking. Comprehensive AI risk management framework tailored specifically to banking and financial services with latest regulatory developments.",
+    "category": "Financial Services",
+    "downloadUrl": "/resources/financial-services-ai-risk-framework.md",
+    "viewUrl": "/resources/financial-ai-risk-framework",
+    "type": "Framework",
+    "pages": 145,
+    "readTime": "55 min",
+    "difficulty": "Advanced",
+    "tags": ["Financial Services", "Risk Management", "Algorithmic Auditing", "Banking AI"]
+  },
+  {
+    "title": "Legacy AI Integration Playbook",
+    "description": "API-First Transformation Without System Overhauls. Pragmatic strategy for integrating advanced AI capabilities with mission-critical legacy infrastructure using proven 3-phase methodology.",
+    "category": "Integration",
+    "downloadUrl": "/resources/Legacy AI Integration Playbook_.md",
+    "viewUrl": "/resources/legacy-ai-integration",
+    "type": "Playbook",
+    "pages": 134,
+    "readTime": "48 min",
+    "difficulty": "Advanced",
+    "tags": ["Legacy Systems", "API Integration", "System Modernization", "Enterprise Architecture"]
+  }
+]

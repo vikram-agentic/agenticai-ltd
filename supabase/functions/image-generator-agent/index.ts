@@ -23,213 +23,187 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { requestId, content, title } = await req.json();
+    const { 
+      requestId, 
+      content, 
+      title, 
+      imageType = 'featured', 
+      prompt, 
+      aspectRatio = '16:9',
+      count = 1 
+    } = await req.json();
 
-    if (!requestId || !content || !title) {
-      throw new Error('Missing required fields: requestId, content, and title');
+    if (!requestId && !prompt) {
+      throw new Error('Missing required fields: requestId or prompt');
     }
 
-    console.log('Starting AI image generation for request:', requestId);
+    console.log('Starting image generation with BFL Flux Kontext Pro...');
 
-    // Update request status
-    await supabase
-      .from('content_requests')
-      .update({ status: 'generating_images', progress: 85 })
-      .eq('id', requestId);
+    let imagePrompts = [];
 
-    // Step 1: Generate image prompts from content
-    console.log('Generating image prompts from content...');
-    
-    const promptGenerationResponse = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${Deno.env.get('ANTHROPIC_API_KEY')}`,
-        'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
-        temperature: 0.7,
-        messages: [
-          {
-            role: 'user',
-            content: `You are an expert image prompt engineer for Agentic AI AMRO Ltd. Create compelling image prompts for the following content:
-
-Title: ${title}
-Content: ${content.substring(0, 2000)}...
-
-Requirements:
-1. Create 3 different image prompts for different aspects of the content
-2. Focus on AI automation, technology, and business themes
-3. Include professional, modern, and futuristic elements
-4. Optimize for BFL Flux Kontext Pro model
-5. Include specific style and quality parameters
-
-Provide response in JSON format:
-{
-  "imagePrompts": [
-    {
-      "prompt": "detailed prompt description",
-      "aspectRatio": "16:9",
-      "style": "professional, modern, tech-focused",
-      "purpose": "hero image, featured image, or section illustration"
-    }
-  ],
-  "brandGuidelines": {
-    "colorScheme": "purple, blue, white",
-    "style": "modern, professional, futuristic",
-    "elements": "AI, automation, technology, business"
-  }
-}
-
-Focus on creating images that represent Agentic AI AMRO Ltd's expertise in AI automation and business solutions.`
-          }
-        ]
-      }),
-    });
-
-    if (!promptGenerationResponse.ok) {
-      throw new Error(`Claude API error: ${promptGenerationResponse.statusText}`);
+    if (prompt) {
+      // Direct prompt provided
+      imagePrompts = [prompt];
+    } else {
+      // Generate prompts based on content and type
+      if (imageType === 'featured') {
+        imagePrompts = [generateFeaturedImagePrompt(title, content)];
+      } else {
+        imagePrompts = generateContentImagePrompts(content, count);
+      }
     }
 
-    const promptData = await promptGenerationResponse.json();
-    const promptContent = promptData.content[0].text;
-
-    let parsedPrompts;
-    try {
-      parsedPrompts = JSON.parse(promptContent);
-    } catch (e) {
-      parsedPrompts = {
-        imagePrompts: [
-          {
-            prompt: "Modern AI automation technology concept, purple and blue gradient background, professional business setting, futuristic interface, clean design, high quality, 4K",
-            aspectRatio: "16:9",
-            style: "professional, modern, tech-focused",
-            purpose: "hero image"
-          }
-        ],
-        brandGuidelines: {
-          colorScheme: "purple, blue, white",
-          style: "modern, professional, futuristic",
-          elements: "AI, automation, technology, business"
-        }
-      };
-    }
-
-    // Step 2: Generate images using BFL Flux Kontext Pro
-    console.log('Generating images with BFL Flux...');
-    
     const generatedImages = [];
 
-    for (const imagePrompt of parsedPrompts.imagePrompts) {
-      const bflResponse = await fetch('https://api.bfl.ml/v1/images/generations', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${bflApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'kontext-pro',
-          prompt: imagePrompt.prompt,
-          aspect_ratio: imagePrompt.aspectRatio,
-          quality: 'high',
-          style: imagePrompt.style,
-          negative_prompt: "blurry, low quality, distorted, amateur, cartoon, anime",
-          num_images: 1,
-          guidance_scale: 7.5,
-          num_inference_steps: 50,
-          seed: Math.floor(Math.random() * 1000000)
-        }),
-      });
+    for (const imagePrompt of imagePrompts) {
+      try {
+        console.log(`Generating image with prompt: ${imagePrompt}`);
 
-      if (!bflResponse.ok) {
-        throw new Error(`BFL API error: ${bflResponse.statusText}`);
-      }
+        // Submit generation request to BFL API
+        const generateResponse = await fetch('https://api.bfl.ai/v1/flux-kontext-pro', {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json',
+            'x-key': bflApiKey,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: imagePrompt,
+            aspect_ratio: aspectRatio,
+            output_format: 'jpeg',
+            safety_tolerance: 2,
+            prompt_upsampling: true
+          }),
+        });
 
-      const bflData = await bflResponse.json();
-      
-      if (bflData.data && bflData.data.length > 0) {
-        generatedImages.push({
-          prompt: imagePrompt.prompt,
-          imageUrl: bflData.data[0].url,
-          aspectRatio: imagePrompt.aspectRatio,
-          purpose: imagePrompt.purpose,
-          generationParams: {
-            model: 'kontext-pro',
-            quality: 'high',
-            guidance_scale: 7.5,
-            num_inference_steps: 50
+        if (!generateResponse.ok) {
+          throw new Error(`BFL API error: ${generateResponse.statusText}`);
+        }
+
+        const generateData = await generateResponse.json();
+        const requestImageId = generateData.id;
+        const pollingUrl = generateData.polling_url;
+
+        console.log(`Image generation started. ID: ${requestImageId}, Polling URL: ${pollingUrl}`);
+
+        // Poll for result
+        let imageResult = null;
+        let attempts = 0;
+        const maxAttempts = 60; // 30 seconds with 0.5s intervals
+
+        while (attempts < maxAttempts && !imageResult) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+          attempts++;
+
+          const pollResponse = await fetch(pollingUrl, {
+            method: 'GET',
+            headers: {
+              'accept': 'application/json',
+              'x-key': bflApiKey,
+            },
+          });
+
+          if (!pollResponse.ok) {
+            console.warn(`Polling attempt ${attempts} failed: ${pollResponse.statusText}`);
+            continue;
           }
+
+          const pollData = await pollResponse.json();
+          
+          if (pollData.status === 'Ready') {
+            imageResult = pollData.result;
+            console.log(`Image ready: ${imageResult.sample}`);
+            break;
+          } else if (pollData.status === 'Error' || pollData.status === 'Failed') {
+            throw new Error(`Image generation failed: ${JSON.stringify(pollData)}`);
+          }
+          
+          console.log(`Polling attempt ${attempts}: Status ${pollData.status}`);
+        }
+
+        if (!imageResult) {
+          throw new Error('Image generation timed out after 30 seconds');
+        }
+
+        // Download and store the image
+        const imageUrl = imageResult.sample;
+        const imageResponse = await fetch(imageUrl);
+        
+        if (!imageResponse.ok) {
+          throw new Error(`Failed to download image: ${imageResponse.statusText}`);
+        }
+
+        const imageBuffer = await imageResponse.arrayBuffer();
+        const imageBase64 = btoa(String.fromCharCode(...new Uint8Array(imageBuffer)));
+
+        // Store in database
+        const { data: imageRecord, error: insertError } = await supabase
+          .from('ai_generated_images')
+          .insert({
+            request_id: requestId,
+            image_type: imageType,
+            prompt: imagePrompt,
+            image_url: imageUrl,
+            image_data: imageBase64,
+            aspect_ratio: aspectRatio,
+            generation_model: 'flux-kontext-pro',
+            generation_params: {
+              safety_tolerance: 2,
+              prompt_upsampling: true,
+              output_format: 'jpeg'
+            }
+          })
+          .select()
+          .single();
+
+        if (insertError) {
+          console.error('Error storing image:', insertError);
+          // Continue with other images even if storage fails
+        }
+
+        generatedImages.push({
+          id: imageRecord?.id,
+          url: imageUrl,
+          prompt: imagePrompt,
+          type: imageType,
+          base64: imageBase64
+        });
+
+      } catch (imageError) {
+        console.error(`Error generating image for prompt "${imagePrompt}":`, imageError);
+        // Continue with other images
+        generatedImages.push({
+          error: imageError.message,
+          prompt: imagePrompt,
+          type: imageType
         });
       }
     }
 
     // Log API usage
-    await supabase.from('api_usage_logs').insert([
-      {
-        service_name: 'claude',
-        endpoint: 'messages',
-        tokens_used: promptData.usage?.output_tokens || 0,
-        cost_usd: ((promptData.usage?.input_tokens || 0) * 0.000015) + ((promptData.usage?.output_tokens || 0) * 0.000075),
-        request_data: { type: 'image_prompt_generation', requestId },
-        response_data: { prompts: parsedPrompts },
-        success: true
+    await supabase.from('api_usage_logs').insert({
+      service_name: 'bfl-flux-kontext-pro',
+      endpoint: 'image-generation',
+      tokens_used: imagePrompts.length, // Count of images generated
+      cost_usd: imagePrompts.length * 0.055, // BFL pricing estimate
+      request_data: { 
+        image_type: imageType, 
+        prompts_count: imagePrompts.length,
+        aspect_ratio: aspectRatio 
       },
-      {
-        service_name: 'bfl_flux',
-        endpoint: 'images/generations',
-        tokens_used: generatedImages.length,
-        cost_usd: generatedImages.length * 0.05, // Approximate cost per image
-        request_data: { type: 'image_generation', requestId, model: 'kontext-pro' },
-        response_data: { imagesGenerated: generatedImages.length },
-        success: true
-      }
-    ]);
+      response_data: { 
+        generated_count: generatedImages.filter(img => !img.error).length,
+        failed_count: generatedImages.filter(img => img.error).length
+      },
+      success: generatedImages.some(img => !img.error)
+    });
 
-    // Store generated images
-    const { data: contentRecord } = await supabase
-      .from('generated_content')
-      .select('id')
-      .eq('request_id', requestId)
-      .single();
-
-    if (contentRecord && generatedImages.length > 0) {
-      for (const image of generatedImages) {
-        await supabase
-          .from('ai_generated_images')
-          .insert({
-            content_id: contentRecord.id,
-            prompt: image.prompt,
-            image_url: image.imageUrl,
-            aspect_ratio: image.aspectRatio,
-            generation_params: image.generationParams,
-            purpose: image.purpose
-          });
-      }
-
-      // Update content with featured image
-      await supabase
-        .from('generated_content')
-        .update({ 
-          featured_image_url: generatedImages[0].imageUrl,
-          status: 'draft'
-        })
-        .eq('id', contentRecord.id);
-    }
-
-    // Update request to completed
-    await supabase
-      .from('content_requests')
-      .update({ status: 'completed', progress: 100 })
-      .eq('id', requestId);
-
-    console.log('Image generation completed successfully');
+    console.log(`Image generation completed. Generated: ${generatedImages.filter(img => !img.error).length}, Failed: ${generatedImages.filter(img => img.error).length}`);
 
     return new Response(JSON.stringify({
       success: true,
       images: generatedImages,
-      message: 'Images generated successfully with BFL Flux Kontext Pro'
+      message: `Generated ${generatedImages.filter(img => !img.error).length} images successfully`
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -243,8 +217,8 @@ Focus on creating images that represent Agentic AI AMRO Ltd's expertise in AI au
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     await supabase.from('api_usage_logs').insert({
-      service_name: 'bfl_flux',
-      endpoint: 'images/generations',
+      service_name: 'bfl-flux-kontext-pro',
+      endpoint: 'image-generation',
       success: false,
       error_message: error.message
     });
@@ -258,3 +232,86 @@ Focus on creating images that represent Agentic AI AMRO Ltd's expertise in AI au
     });
   }
 });
+
+function generateFeaturedImagePrompt(title: string, content: string): string {
+  // Extract key themes and concepts from title and content
+  const keyWords = extractKeywords(title + ' ' + content);
+  
+  const styles = [
+    'professional business photography',
+    'modern minimalist design',
+    'high-tech corporate aesthetic',
+    'sleek digital illustration',
+    'contemporary abstract art',
+    'futuristic technology visualization'
+  ];
+
+  const style = styles[Math.floor(Math.random() * styles.length)];
+
+  return `Professional featured image for "${title}". ${style}, incorporating themes of ${keyWords.slice(0, 3).join(', ')}, clean composition, vibrant colors, high quality, 4K resolution, suitable for blog header or social media, modern and engaging visual design`;
+}
+
+function generateContentImagePrompts(content: string, count: number): string[] {
+  const prompts = [];
+  const sections = content.split('\n\n').filter(section => section.length > 100);
+  
+  const imageTypes = [
+    'infographic style illustration',
+    'conceptual diagram',
+    'professional photography',
+    'modern digital art',
+    'technical visualization',
+    'abstract representation'
+  ];
+
+  for (let i = 0; i < Math.min(count, sections.length); i++) {
+    const section = sections[i];
+    const keywords = extractKeywords(section);
+    const imageType = imageTypes[i % imageTypes.length];
+    
+    prompts.push(
+      `${imageType} representing ${keywords.slice(0, 2).join(' and ')}, professional quality, clean design, suitable for article content, modern aesthetic, high resolution`
+    );
+  }
+
+  // Fill remaining slots if needed
+  while (prompts.length < count) {
+    const keywords = extractKeywords(content);
+    const imageType = imageTypes[prompts.length % imageTypes.length];
+    
+    prompts.push(
+      `${imageType} about ${keywords[Math.floor(Math.random() * keywords.length)]}, professional business style, clean and modern, high quality`
+    );
+  }
+
+  return prompts;
+}
+
+function extractKeywords(text: string): string[] {
+  // Simple keyword extraction
+  const commonWords = new Set([
+    'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by',
+    'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did',
+    'will', 'would', 'could', 'should', 'may', 'might', 'can', 'this', 'that', 'these', 'those',
+    'i', 'you', 'he', 'she', 'it', 'we', 'they', 'me', 'him', 'her', 'us', 'them'
+  ]);
+
+  const words = text
+    .toLowerCase()
+    .replace(/[^\w\s]/g, ' ')
+    .split(/\s+/)
+    .filter(word => word.length > 3 && !commonWords.has(word))
+    .filter(word => !/^\d+$/.test(word));
+
+  // Count word frequency
+  const wordCount: { [key: string]: number } = {};
+  words.forEach(word => {
+    wordCount[word] = (wordCount[word] || 0) + 1;
+  });
+
+  // Return top keywords sorted by frequency
+  return Object.entries(wordCount)
+    .sort(([,a], [,b]) => b - a)
+    .slice(0, 10)
+    .map(([word]) => word);
+}

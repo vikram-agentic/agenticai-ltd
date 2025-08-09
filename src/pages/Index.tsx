@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/Navigation";
@@ -9,6 +8,8 @@ import { InteractiveStats } from "@/components/ui/interactive-stats";
 import { AnimatedSection } from "@/components/ui/animated-section";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { MeetingBookingModal } from "@/components/MeetingBookingModal";
+import { Button } from "@/components/ui/button";
 import { 
   Brain,
   Zap, 
@@ -26,10 +27,6 @@ import {
 const Index = () => {
   const navigate = useNavigate();
 
-  const handleScheduleConsultation = () => {
-    window.open('https://calendly.com/amro-agentic', '_blank');
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -42,7 +39,7 @@ const Index = () => {
         description="Harness the power of autonomous AI agents to automate complex processes, boost productivity, and drive unprecedented growth with our cutting-edge solutions."
         primaryAction={{
           text: "Schedule Free Consultation",
-          onClick: handleScheduleConsultation
+          onClick: () => navigate('/book-meeting')
         }}
         secondaryAction={{
           text: "Learn About Agentic AI",
@@ -215,14 +212,15 @@ const Index = () => {
               Get started with a free consultation today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                size="lg" 
+              <MeetingBookingModal 
+                triggerText="Schedule Free Consultation"
+                triggerSize="lg"
                 className="bg-gradient-to-r from-primary to-accent hover:opacity-90 px-8 py-3 text-lg"
-                onClick={handleScheduleConsultation}
+                serviceType="General Inquiry"
               >
                 Schedule Free Consultation
                 <Calendar className="ml-2 h-5 w-5" />
-              </Button>
+              </MeetingBookingModal>
               <Link to="/contact">
                 <Button size="lg" variant="outline" className="px-8 py-3 text-lg">
                   Contact Our Team

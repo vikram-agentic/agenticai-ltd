@@ -1,17 +1,14 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Heart, Activity, Stethoscope, Brain, Clock, Users } from "lucide-react";
+import { MeetingBookingModal } from "@/components/MeetingBookingModal";
+import { Button } from "@/components/ui/button";
 
 const Healthcare = () => {
   const navigate = useNavigate();
-
-  const handleScheduleConsultation = () => {
-    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
-  };
 
   const handleContactUs = () => {
     navigate("/contact");
@@ -95,14 +92,15 @@ const Healthcare = () => {
             Discover how leading healthcare organizations are using AI to improve patient outcomes, enhance diagnostic accuracy, and optimize clinical workflows.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              onClick={handleScheduleConsultation}
+            <MeetingBookingModal 
+              triggerText="Schedule Healthcare AI Consultation"
+              triggerSize="lg"
               className="bg-gradient-primary hover:opacity-90"
+              serviceType="Healthcare AI"
             >
               Schedule Healthcare AI Consultation
               <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            </MeetingBookingModal>
             <Button 
               size="lg" 
               variant="outline" 
@@ -214,13 +212,12 @@ const Healthcare = () => {
             Join leading healthcare organizations leveraging AI to improve patient outcomes and operational efficiency.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg"
-              variant="secondary"
-              onClick={handleScheduleConsultation}
-            >
-              Schedule Healthcare Assessment
-            </Button>
+            <MeetingBookingModal 
+              triggerText="Schedule Healthcare Assessment"
+              triggerSize="lg"
+              triggerVariant="secondary"
+              serviceType="Healthcare AI"
+            />
             <Button 
               size="lg"
               variant="outline"

@@ -1,17 +1,14 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Factory, Cog, TrendingDown, Clock, Shield, BarChart } from "lucide-react";
+import { MeetingBookingModal } from "@/components/MeetingBookingModal";
+import { Button } from "@/components/ui/button";
 
 const Manufacturing = () => {
   const navigate = useNavigate();
-
-  const handleScheduleConsultation = () => {
-    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
-  };
 
   const handleContactUs = () => {
     navigate("/contact");
@@ -128,14 +125,15 @@ const Manufacturing = () => {
             Discover how leading manufacturers are using AI to optimize operations, improve quality, and reduce costs through intelligent automation.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              onClick={handleScheduleConsultation}
+            <MeetingBookingModal 
+              triggerText="Schedule Manufacturing AI Consultation"
+              triggerSize="lg"
               className="bg-gradient-primary hover:opacity-90"
+              serviceType="Manufacturing AI"
             >
               Schedule Manufacturing AI Consultation
               <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            </MeetingBookingModal>
             <Button 
               size="lg" 
               variant="outline" 
@@ -335,13 +333,12 @@ const Manufacturing = () => {
             Join leading manufacturers leveraging AI to optimize operations, improve quality, and reduce costs through intelligent automation.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg"
-              variant="secondary"
-              onClick={handleScheduleConsultation}
-            >
-              Schedule Manufacturing Assessment
-            </Button>
+            <MeetingBookingModal 
+              triggerText="Schedule Manufacturing Assessment"
+              triggerSize="lg"
+              triggerVariant="secondary"
+              serviceType="Manufacturing AI"
+            />
             <Button 
               size="lg"
               variant="outline"

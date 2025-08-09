@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -16,6 +15,8 @@ import {
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { MeetingBookingModal } from "@/components/MeetingBookingModal";
+import { Button } from "@/components/ui/button";
 
 const WhatIsAgenticAI = () => {
   const keyCharacteristics = [
@@ -122,10 +123,6 @@ const WhatIsAgenticAI = () => {
     }
   ];
 
-  const handleScheduleConsultation = () => {
-    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
-  };
-
   const handleViewCaseStudies = () => {
     window.location.href = "/case-studies";
   };
@@ -147,13 +144,12 @@ const WhatIsAgenticAI = () => {
             that can perceive, reason, plan, and act independently to achieve specific goals, 
             fundamentally transforming how businesses operate.
           </p>
-          <Button 
-            size="lg" 
+          <MeetingBookingModal 
+            triggerText="Explore AI Solutions"
+            triggerSize="lg"
             className="bg-gradient-primary hover:opacity-90"
-            onClick={handleScheduleConsultation}
-          >
-            Explore AI Solutions
-          </Button>
+            serviceType="AI Solutions Inquiry"
+          />
         </div>
       </section>
 
@@ -382,13 +378,12 @@ const WhatIsAgenticAI = () => {
             and gain competitive advantages.
           </p>
           <div className="flex gap-4 justify-center">
-            <Button 
-              size="lg" 
+            <MeetingBookingModal 
+              triggerText="Start Your AI Journey"
+              triggerSize="lg"
               className="bg-gradient-primary hover:opacity-90"
-              onClick={handleScheduleConsultation}
-            >
-              Start Your AI Journey
-            </Button>
+              serviceType="AI Journey Inquiry"
+            />
             <Button 
               size="lg" 
               variant="outline"

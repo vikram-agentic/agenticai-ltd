@@ -1,17 +1,14 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle, ArrowRight, Bot, Zap, Clock, DollarSign, BarChart, Settings } from "lucide-react";
+import { MeetingBookingModal } from "@/components/MeetingBookingModal";
+import { Button } from "@/components/ui/button";
 
 const AIAgentAutomation = () => {
   const navigate = useNavigate();
-
-  const handleScheduleConsultation = () => {
-    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
-  };
 
   const handleContactUs = () => {
     navigate("/contact");
@@ -74,14 +71,15 @@ const AIAgentAutomation = () => {
             Deploy AI agents that automate complex business processes, reduce costs, and scale your operations without limits.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              onClick={handleScheduleConsultation}
+            <MeetingBookingModal 
+              triggerText="Automate Your Business"
+              triggerSize="lg"
               className="bg-gradient-primary hover:opacity-90"
+              serviceType="AI Agent & Automation"
             >
               Automate Your Business
               <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            </MeetingBookingModal>
             <Button 
               size="lg" 
               variant="outline" 
@@ -289,13 +287,12 @@ const AIAgentAutomation = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button 
+                  <MeetingBookingModal 
+                    triggerText="Start Automation"
                     className="w-full mt-6"
-                    variant={tier.popular ? "default" : "outline"}
-                    onClick={handleScheduleConsultation}
-                  >
-                    Start Automation
-                  </Button>
+                    triggerVariant={tier.popular ? "default" : "outline"}
+                    serviceType={tier.name}
+                  />
                 </CardContent>
               </Card>
             ))}
@@ -311,13 +308,12 @@ const AIAgentAutomation = () => {
             Let our AI agents handle the repetitive work so your team can focus on what matters most.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg"
-              variant="secondary"
-              onClick={handleScheduleConsultation}
-            >
-              Schedule Automation Audit
-            </Button>
+            <MeetingBookingModal 
+              triggerText="Schedule Automation Audit"
+              triggerSize="lg"
+              triggerVariant="secondary"
+              serviceType="Automation Audit"
+            />
             <Button 
               size="lg"
               variant="outline"

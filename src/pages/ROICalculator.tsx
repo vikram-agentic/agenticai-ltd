@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -9,6 +8,8 @@ import { Separator } from "@/components/ui/separator";
 import { Calculator, Download, TrendingUp, Clock, DollarSign } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { MeetingBookingModal } from "@/components/MeetingBookingModal";
+import { Button } from "@/components/ui/button";
 
 const ROICalculator = () => {
   const [formData, setFormData] = useState({
@@ -266,12 +267,11 @@ const ROICalculator = () => {
                       <Download className="h-4 w-4 mr-2" />
                       Download Detailed Report
                     </Button>
-                    <Button 
+                    <MeetingBookingModal 
+                      triggerText="Schedule ROI Consultation"
                       className="w-full"
-                      onClick={() => window.open('https://calendly.com/agentic-ai/30min', '_blank')}
-                    >
-                      Schedule ROI Consultation
-                    </Button>
+                      serviceType="ROI Consultation"
+                    />
                   </div>
                 </div>
               ) : (
@@ -293,9 +293,11 @@ const ROICalculator = () => {
                 Our AI experts will help you realize these projected savings and more.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" onClick={() => window.open('https://calendly.com/agentic-ai/30min', '_blank')}>
-                  Get Free Consultation
-                </Button>
+                <MeetingBookingModal 
+                  triggerText="Get Free Consultation"
+                  triggerSize="lg"
+                  serviceType="ROI Consultation"
+                />
                 <Button size="lg" variant="outline" onClick={() => window.location.href = '/case-studies'}>
                   View Success Stories
                 </Button>

@@ -1,17 +1,14 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle, ArrowRight, Building2, Heart, ShoppingCart, Factory, Briefcase, GraduationCap } from "lucide-react";
+import { MeetingBookingModal } from "@/components/MeetingBookingModal";
+import { Button } from "@/components/ui/button";
 
 const IndustrySpecificAI = () => {
   const navigate = useNavigate();
-
-  const handleScheduleConsultation = () => {
-    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
-  };
 
   const handleContactUs = () => {
     navigate("/contact");
@@ -148,14 +145,15 @@ const IndustrySpecificAI = () => {
             Leverage our deep industry expertise to implement AI solutions that understand your sector's unique challenges, regulations, and opportunities.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              onClick={handleScheduleConsultation}
+            <MeetingBookingModal 
+              triggerText="Explore Industry Solutions"
+              triggerSize="lg"
               className="bg-gradient-primary hover:opacity-90"
+              serviceType="Industry-Specific AI"
             >
               Explore Industry Solutions
               <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            </MeetingBookingModal>
             <Button 
               size="lg" 
               variant="outline" 
@@ -367,13 +365,12 @@ const IndustrySpecificAI = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button 
+                  <MeetingBookingModal 
+                    triggerText="Get Started"
                     className="w-full mt-6"
-                    variant={tier.popular ? "default" : "outline"}
-                    onClick={handleScheduleConsultation}
-                  >
-                    Get Started
-                  </Button>
+                    triggerVariant={tier.popular ? "default" : "outline"}
+                    serviceType={tier.name}
+                  />
                 </CardContent>
               </Card>
             ))}
@@ -389,13 +386,12 @@ const IndustrySpecificAI = () => {
             Let's discuss how AI can transform your industry-specific challenges into competitive advantages.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg"
-              variant="secondary"
-              onClick={handleScheduleConsultation}
-            >
-              Schedule Industry Consultation
-            </Button>
+            <MeetingBookingModal 
+              triggerText="Schedule Industry Consultation"
+              triggerSize="lg"
+              triggerVariant="secondary"
+              serviceType="Industry-Specific AI"
+            />
             <Button 
               size="lg"
               variant="outline"

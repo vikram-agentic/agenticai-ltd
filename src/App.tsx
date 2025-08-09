@@ -8,14 +8,24 @@ import About from "./pages/About";
 import Services from "./pages/Services";
 import CaseStudies from "./pages/CaseStudies";
 import Resources from "./pages/Resources";
+import ResourceViewer from "./pages/ResourceViewer";
 import Blog from "./pages/Blog";
 import Contact from "./pages/Contact";
 import WhatIsAgenticAI from "./pages/WhatIsAgenticAI";
 import NotFound from "./pages/NotFound";
-import AdminDashboard from "./pages/AdminDashboard";
+import AdminLayout from "./components/AdminLayout";
+import AdminLogin from "./pages/admin/AdminLogin";
+import Dashboard from "./pages/admin/Dashboard";
+import ContentManager from "./pages/admin/ContentManager";
+import WebsiteManager from "./pages/admin/WebsiteManager";
+import NewsletterManager from "./pages/admin/NewsletterManager";
+import ChatbotManager from "./pages/admin/ChatbotManager";
+import ContactsManager from "./pages/admin/ContactsManager";
+import AdminMeetingDashboard from "./pages/admin/AdminMeetingDashboard";
 import ROICalculator from "./pages/ROICalculator";
 import Portfolio from "./pages/Portfolio";
 import SupportOptions from "./pages/SupportOptions";
+import BookMeetingPage from "./pages/BookMeeting";
 import { Chatbot } from "./components/Chatbot";
 
 // Service Pages
@@ -54,14 +64,25 @@ const App = () => (
           <Route path="/case-studies/retail-ecommerce" element={<RetailEcommerce />} />
           <Route path="/case-studies/manufacturing" element={<Manufacturing />} />
           <Route path="/resources" element={<Resources />} />
+          <Route path="/resources/:slug" element={<ResourceViewer />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<Blog />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/what-is-agentic-ai" element={<WhatIsAgenticAI />} />
-          <Route path="/admin-agentic" element={<AdminDashboard />} />
+          
+          {/* New admin routes */}
+          <Route path="/admin-agentic/login" element={<AdminLogin />} />
+          <Route path="/admin-agentic" element={<AdminLayout><Dashboard /></AdminLayout>} />
+          <Route path="/admin-agentic/content" element={<AdminLayout><ContentManager /></AdminLayout>} />
+          <Route path="/admin-agentic/website" element={<AdminLayout><WebsiteManager /></AdminLayout>} />
+          <Route path="/admin-agentic/chatbot" element={<AdminLayout><ChatbotManager /></AdminLayout>} />
+          <Route path="/admin-agentic/contacts" element={<AdminLayout><ContactsManager /></AdminLayout>} />
+          <Route path="/admin-agentic/newsletter" element={<AdminLayout><NewsletterManager /></AdminLayout>} />
+          <Route path="/admin-agentic/meetings" element={<AdminLayout><AdminMeetingDashboard /></AdminLayout>} />
           <Route path="/roi-calculator" element={<ROICalculator />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/support-options" element={<SupportOptions />} />
+          <Route path="/book-meeting" element={<BookMeetingPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

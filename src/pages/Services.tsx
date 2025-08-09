@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -24,6 +23,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { MeetingBookingModal } from "@/components/MeetingBookingModal";
+import { Button } from "@/components/ui/button";
 
 const Services = () => {
   const navigate = useNavigate();
@@ -104,10 +105,6 @@ const Services = () => {
     "AWS SageMaker", "Docker", "Kubernetes", "API Integration", "Real-time Processing"
   ];
 
-  const handleScheduleConsultation = () => {
-    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
-  };
-
   const handleViewCaseStudies = () => {
     window.location.href = "/case-studies";
   };
@@ -128,13 +125,12 @@ const Services = () => {
             Transform your business with our comprehensive AI automation services. 
             From custom AI development to industry-specific solutions.
           </p>
-          <Button 
-            size="lg" 
+          <MeetingBookingModal 
+            triggerText="Get Started Today"
+            triggerSize="lg"
             className="bg-gradient-primary hover:opacity-90"
-            onClick={handleScheduleConsultation}
-          >
-            Get Started Today
-          </Button>
+            serviceType="General Inquiry"
+          />
         </div>
       </section>
 
@@ -330,13 +326,12 @@ const Services = () => {
             Get a free consultation and discover how AI can transform your business operations.
           </p>
           <div className="flex gap-4 justify-center">
-            <Button 
-              size="lg" 
+            <MeetingBookingModal 
+              triggerText="Free Consultation"
+              triggerSize="lg"
               className="bg-gradient-primary hover:opacity-90"
-              onClick={handleScheduleConsultation}
-            >
-              Free Consultation
-            </Button>
+              serviceType="General Inquiry"
+            />
             <Button 
               size="lg" 
               variant="outline"

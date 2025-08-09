@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown } from "lucide-react";
+import { MeetingBookingModal } from "./MeetingBookingModal";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -25,10 +25,6 @@ const Navigation = () => {
     { name: "Blog", path: "/blog" },
     { name: "Contact", path: "/contact" },
   ];
-
-  const handleScheduleConsultation = () => {
-    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
-  };
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -243,12 +239,11 @@ const Navigation = () => {
               </NavigationMenuList>
             </NavigationMenu>
             
-            <Button 
-              onClick={handleScheduleConsultation}
+            <MeetingBookingModal 
+              triggerText="Schedule Consultation"
               className="bg-gradient-primary hover:opacity-90"
-            >
-              Schedule Consultation
-            </Button>
+              serviceType="General Inquiry"
+            />
           </div>
 
           {/* Mobile menu button */}
@@ -284,12 +279,11 @@ const Navigation = () => {
                 </Link>
               ))}
               <div className="pt-2">
-                <Button 
-                  onClick={handleScheduleConsultation}
+                <MeetingBookingModal 
+                  triggerText="Schedule Consultation"
                   className="w-full bg-gradient-primary hover:opacity-90"
-                >
-                  Schedule Consultation
-                </Button>
+                  serviceType="General Inquiry"
+                />
               </div>
             </div>
           </div>

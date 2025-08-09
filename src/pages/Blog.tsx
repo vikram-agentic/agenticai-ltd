@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, Calendar, User, ArrowRight, Search } from "lucide-react";
@@ -9,6 +8,8 @@ import { Link, useParams } from "react-router-dom";
 import { useContent } from "@/hooks/useContent";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { MeetingBookingModal } from "@/components/MeetingBookingModal";
+import { Button } from "@/components/ui/button";
 
 const Blog = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -42,10 +43,6 @@ const Blog = () => {
     const tmp = document.createElement("DIV");
     tmp.innerHTML = html;
     return tmp.textContent || tmp.innerText || "";
-  };
-
-  const handleScheduleConsultation = () => {
-    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
   };
 
   // If we have a slug, we're viewing a single post
@@ -154,13 +151,12 @@ const Blog = () => {
               Get expert guidance on implementing the AI strategies discussed in this article.
             </p>
             <div className="flex gap-4 justify-center">
-              <Button 
-                size="lg" 
+              <MeetingBookingModal 
+                triggerText="Consult Our Experts"
+                triggerSize="lg"
                 className="bg-gradient-primary hover:opacity-90"
-                onClick={handleScheduleConsultation}
-              >
-                Consult Our Experts
-              </Button>
+                serviceType="Blog Inquiry"
+              />
               <Link to="/services">
                 <Button size="lg" variant="outline">
                   View Our Services
@@ -299,7 +295,6 @@ const Blog = () => {
             <Input placeholder="Enter your email" className="flex-1" />
             <Button 
               className="bg-gradient-primary hover:opacity-90"
-              onClick={handleScheduleConsultation}
             >
               Subscribe
             </Button>

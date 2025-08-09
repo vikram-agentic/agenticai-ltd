@@ -1,10 +1,11 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Building2, Heart, ShoppingCart, Factory, Star, TrendingUp, Users, DollarSign, ArrowRight, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { MeetingBookingModal } from "@/components/MeetingBookingModal";
+import { Button } from "@/components/ui/button";
 
 const CaseStudies = () => {
   const navigate = useNavigate();
@@ -72,10 +73,6 @@ const CaseStudies = () => {
       avgROI: "310%"
     }
   ];
-
-  const handleScheduleConsultation = () => {
-    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
-  };
 
   const handleStartProject = () => {
     window.location.href = "/contact";
@@ -338,13 +335,12 @@ const CaseStudies = () => {
             >
               Start Your Project
             </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              onClick={handleScheduleConsultation}
-            >
-              Schedule Consultation
-            </Button>
+            <MeetingBookingModal 
+              triggerText="Schedule Consultation"
+              triggerVariant="outline"
+              triggerSize="lg"
+              serviceType="Case Study Inquiry"
+            />
           </div>
         </div>
       </section>

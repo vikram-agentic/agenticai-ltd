@@ -1,17 +1,14 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, ShoppingCart, TrendingUp, Users, Eye, Target, BarChart } from "lucide-react";
+import { MeetingBookingModal } from "@/components/MeetingBookingModal";
+import { Button } from "@/components/ui/button";
 
 const RetailEcommerce = () => {
   const navigate = useNavigate();
-
-  const handleScheduleConsultation = () => {
-    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
-  };
 
   const handleContactUs = () => {
     navigate("/contact");
@@ -128,14 +125,15 @@ const RetailEcommerce = () => {
             See how forward-thinking retailers are using AI to personalize experiences, optimize operations, and drive unprecedented growth.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              onClick={handleScheduleConsultation}
+            <MeetingBookingModal 
+              triggerText="Schedule Retail AI Consultation"
+              triggerSize="lg"
               className="bg-gradient-primary hover:opacity-90"
+              serviceType="Retail & E-commerce AI"
             >
               Schedule Retail AI Consultation
               <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            </MeetingBookingModal>
             <Button 
               size="lg" 
               variant="outline" 
@@ -335,13 +333,12 @@ const RetailEcommerce = () => {
             Join leading retailers leveraging AI to personalize experiences, optimize operations, and drive unprecedented growth.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg"
-              variant="secondary"
-              onClick={handleScheduleConsultation}
-            >
-              Schedule Retail AI Assessment
-            </Button>
+            <MeetingBookingModal 
+              triggerText="Schedule Retail AI Assessment"
+              triggerSize="lg"
+              triggerVariant="secondary"
+              serviceType="Retail & E-commerce AI"
+            />
             <Button 
               size="lg"
               variant="outline"

@@ -1,12 +1,9 @@
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Mail, Phone, MapPin, Calendar, Linkedin, Twitter } from "lucide-react";
+import { MeetingBookingModal } from "./MeetingBookingModal";
+import { Button } from "./ui/button";
 
 const Footer = () => {
-  const handleScheduleConsultation = () => {
-    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
-  };
-
   const handleEmailContact = () => {
     window.location.href = "mailto:info@agentic-ai.ltd";
   };
@@ -68,14 +65,12 @@ const Footer = () => {
               Accelerating the agentic transformation of businesses through intelligent automation and AI solutions.
             </p>
             <div className="flex space-x-3">
-              <Button 
-                onClick={handleScheduleConsultation}
-                size="sm" 
+              <MeetingBookingModal 
+                triggerText="Book Consultation"
+                triggerSize="sm"
                 className="bg-gradient-primary hover:opacity-90"
-              >
-                <Calendar className="h-4 w-4 mr-2" />
-                Book Consultation
-              </Button>
+                serviceType="Footer Inquiry"
+              />
             </div>
           </div>
 

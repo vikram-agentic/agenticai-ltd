@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { MeetingBookingModal } from "@/components/MeetingBookingModal";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -36,8 +37,11 @@ const Contact = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleScheduleConsultation = () => {
-    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
+  const handleBookingComplete = (booking: any) => {
+    toast({
+      title: "Meeting Scheduled!",
+      description: `Your consultation has been scheduled successfully. We'll send you a confirmation email shortly.`,
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,23 +49,23 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      // Call Supabase Edge Function to handle contact form submission
-      const { data, error } = await supabase.functions.invoke('contact-form-handler', {
-        body: formData
+      const response = await fetch("https://script.google.com/macros/s/AKfycbxOI4jsKWzon1-Pmr5O_e8l4ZaKnK3DwaXKonzwEEMWf-amnVAR8ddaIFBu3wtwrLOh/exec", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(formData),
       });
 
-      if (error) {
-        console.error('Contact form error:', error);
-        throw new Error(error.message || 'Failed to submit contact form');
-      }
+      const result = await response.json();
 
-      if (!data || !data.success) {
-        throw new Error(data?.error || 'Failed to submit contact form');
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to submit contact form');
       }
       
       toast({
         title: "Message Sent Successfully!",
-        description: data.message || "We'll get back to you within 24 hours.",
+        description: "Your message has been sent. We'll get back to you within 24 hours.",
       });
 
       // Reset form
@@ -304,14 +308,15 @@ const Contact = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">
-                    Book a 30-minute call to discuss your AI needs and get expert advice.
+                    Book a consultation to discuss your AI needs and get expert advice.
                   </p>
-                  <Button 
+                  <MeetingBookingModal
+                    triggerText="Schedule Consultation"
+                    triggerVariant="default"
+                    serviceType="consultation"
+                    onBookingComplete={handleBookingComplete}
                     className="w-full bg-gradient-primary hover:opacity-90"
-                    onClick={handleScheduleConsultation}
-                  >
-                    Book on Calendly
-                  </Button>
+                  />
                 </CardContent>
               </Card>
 

@@ -1,0 +1,153 @@
+{
+  "enterprise_rag_implementation_guide": {
+    "resourceType": "guide",
+    "topic": "Enterprise RAG Implementation",
+    "category": "AI Implementation",
+    "contentPrompt": "Create a comprehensive, professional guide for implementing Retrieval-Augmented Generation (RAG) systems in enterprise environments. Structure: 1. Executive Summary (600+ words), 2. Introduction & Problem Statement (800+ words), 3. Technical Implementation Details (2500+ words), 4. Best Practices & Methodologies (1500+ words), 5. Case Studies & Real Examples (1200+ words), 6. ROI Analysis & Metrics (800+ words), 7. Common Challenges & Solutions (1000+ words), 8. Future Considerations (600+ words). Include extensive hyperlinks, technical diagrams, code examples, and professional HTML formatting with Agentic AI branding.",
+    "imagePrompts": [
+      "Professional RAG architecture diagram showing data flow from knowledge base through retrieval to generation, modern blue and purple gradient, clean corporate design",
+      "Data visualization chart showing RAG implementation ROI metrics over time, bar charts and line graphs, professional business style",
+      "Technical workflow diagram for enterprise RAG systems with connected components, clean modern design",
+      "Comparison matrix showing different RAG implementation approaches, professional table design with checkmarks and ratings"
+    ],
+    "visualizations": [
+      "RAG performance metrics dashboard",
+      "Implementation timeline Gantt chart",
+      "Cost-benefit analysis graph",
+      "System architecture flowchart"
+    ]
+  },
+
+  "ai_cost_optimization_strategies": {
+    "resourceType": "guide", 
+    "topic": "AI Cost Optimization Strategies",
+    "category": "Cost Optimization",
+    "contentPrompt": "Create an in-depth guide for optimizing AI implementation costs in enterprise environments. Structure: 1. Executive Summary (600+ words), 2. Cost Analysis Framework (800+ words), 3. Optimization Strategies (2500+ words), 4. Implementation Methodologies (1500+ words), 5. Case Studies & Savings Examples (1200+ words), 6. ROI Measurement (800+ words), 7. Common Cost Pitfalls (1000+ words), 8. Future Cost Considerations (600+ words). Include detailed cost breakdowns, optimization techniques, and professional formatting with Agentic AI branding.",
+    "imagePrompts": [
+      "Professional cost optimization infographic showing AI expense breakdown with pie charts and bar graphs, modern blue gradient",
+      "ROI comparison chart showing before/after cost optimization results, clean business visualization style",
+      "Resource allocation matrix for AI projects, color-coded professional grid design",
+      "Cost reduction timeline showing savings progression over implementation phases"
+    ],
+    "visualizations": [
+      "AI cost breakdown pie chart",
+      "Optimization impact timeline",
+      "Resource utilization heatmap",
+      "Budget allocation waterfall chart"
+    ]
+  },
+
+  "building_first_ai_agent": {
+    "resourceType": "guide",
+    "topic": "Building Your First AI Agent", 
+    "category": "AI Implementation",
+    "contentPrompt": "Create a comprehensive beginner-to-advanced guide for building AI agents. Structure: 1. Executive Summary (600+ words), 2. AI Agent Fundamentals (800+ words), 3. Technical Implementation (2500+ words), 4. Development Best Practices (1500+ words), 5. Real-world Examples (1200+ words), 6. Performance Optimization (800+ words), 7. Deployment & Scaling (1000+ words), 8. Future Enhancements (600+ words). Include code examples, step-by-step instructions, and professional formatting with Agentic AI branding.",
+    "imagePrompts": [
+      "AI agent architecture diagram showing components and data flow, modern technical illustration style",
+      "Development workflow visualization with stages and milestones, professional process diagram",
+      "Agent performance metrics dashboard mockup, clean modern UI design",
+      "Deployment architecture showing agent integration with existing systems"
+    ],
+    "visualizations": [
+      "Agent capability matrix",
+      "Development roadmap timeline", 
+      "Performance benchmarking chart",
+      "Integration architecture diagram"
+    ]
+  },
+
+  "ai_implementation_checklist": {
+    "resourceType": "template",
+    "topic": "AI Implementation Checklist",
+    "category": "AI Implementation", 
+    "contentPrompt": "Create a comprehensive, actionable checklist for AI project implementation. Structure: 1. Template Overview (400+ words), 2. Pre-Implementation Phase (25+ items), 3. Planning & Strategy (30+ items), 4. Technical Implementation (35+ items), 5. Testing & Validation (25+ items), 6. Deployment (20+ items), 7. Post-Implementation (25+ items). Include interactive checkboxes, priority levels, time estimates, and CSV-compatible format with Agentic AI branding.",
+    "imagePrompts": [
+      "Project phase timeline with checkpoints and milestones, Gantt chart style visualization",
+      "Team responsibility matrix showing roles and tasks, organizational chart design",
+      "Risk assessment heat map with color-coded priority levels",
+      "Implementation progress dashboard with completion percentages"
+    ],
+    "visualizations": [
+      "Implementation timeline chart",
+      "Task priority matrix",
+      "Team allocation pie chart", 
+      "Progress tracking dashboard"
+    ]
+  },
+
+  "ai_cost_tracking_template": {
+    "resourceType": "template",
+    "topic": "AI Cost Tracking Template",
+    "category": "Cost Optimization",
+    "contentPrompt": "Create a comprehensive template for tracking AI implementation and operational costs. Structure: 1. Template Instructions (400+ words), 2. Cost Categories Setup (detailed breakdown), 3. Budget Planning Framework (comprehensive planning), 4. Expense Tracking System (detailed tracking), 5. ROI Calculation Methods (measurement framework), 6. Reporting Templates (professional reports). Include CSV-compatible tables, formulas, and professional formatting with Agentic AI branding.",
+    "imagePrompts": [
+      "Cost tracking dashboard mockup with charts and metrics, professional business interface",
+      "Budget allocation visualization with categories and percentages, modern chart design", 
+      "ROI calculation flowchart showing input and output metrics",
+      "Expense trend analysis with line graphs and projections"
+    ],
+    "visualizations": [
+      "Cost breakdown pie chart",
+      "Budget vs actual spending graph",
+      "ROI progression timeline",
+      "Expense category comparison"
+    ]
+  },
+
+  "ai_governance_checklist": {
+    "resourceType": "checklist",
+    "topic": "AI Governance Checklist", 
+    "category": "Governance",
+    "contentPrompt": "Create a comprehensive governance checklist for AI implementations. Structure: 1. Governance Overview (500+ words), 2. Policy Development (20+ items), 3. Risk Management (25+ items), 4. Compliance Verification (30+ items), 5. Ethical Considerations (20+ items), 6. Monitoring & Auditing (25+ items), 7. Continuous Improvement (15+ items). Include detailed action items, responsible parties, and professional formatting with Agentic AI branding.",
+    "imagePrompts": [
+      "AI governance framework diagram with interconnected policies and processes",
+      "Risk management matrix with impact and probability assessments, color-coded grid",
+      "Compliance monitoring dashboard with status indicators and alerts",
+      "Governance workflow showing approval processes and decision points"
+    ],
+    "visualizations": [
+      "Governance framework diagram",
+      "Risk assessment matrix",
+      "Compliance status dashboard",
+      "Policy implementation timeline"
+    ]
+  },
+
+  "future_of_work_ai_agents_2025": {
+    "resourceType": "report",
+    "topic": "The Future of Work with AI Agents",
+    "category": "Business Strategy",
+    "contentPrompt": "Create an in-depth research report on AI agents transforming workplace dynamics. Structure: 1. Executive Summary (800+ words), 2. Market Analysis & Trends (2500+ words), 3. Industry Survey Results (2000+ words), 4. Competitive Landscape (1500+ words), 5. Technology Deep Dive (3000+ words), 6. Implementation Case Studies (2500+ words), 7. Future Predictions (1500+ words), 8. Methodology (700+ words). Include statistical analysis, survey data, citations, and professional formatting with Agentic AI branding.",
+    "imagePrompts": [
+      "Future workplace visualization with AI agents collaborating with humans, modern professional illustration",
+      "Market trend analysis chart showing AI adoption growth over time, professional business graphics",
+      "Industry survey results infographic with percentages and statistics, clean modern design",
+      "Technology evolution timeline showing AI agent development progression"
+    ],
+    "visualizations": [
+      "AI adoption growth chart",
+      "Workplace transformation timeline",
+      "Industry impact comparison",
+      "Future scenario projections"
+    ]
+  },
+
+  "industry_ai_adoption_report_2025": {
+    "resourceType": "report",
+    "topic": "Industry AI Adoption Report 2025",
+    "category": "Business Strategy", 
+    "contentPrompt": "Create a comprehensive industry analysis report on AI adoption across sectors. Structure: 1. Executive Summary (800+ words), 2. Cross-Industry Analysis (2500+ words), 3. Sector-Specific Insights (2000+ words), 4. Adoption Barriers & Drivers (1500+ words), 5. Technology Assessment (3000+ words), 6. Implementation Strategies (2500+ words), 7. Market Predictions (1500+ words), 8. Research Methodology (700+ words). Include industry comparisons, adoption metrics, and professional formatting with Agentic AI branding.",
+    "imagePrompts": [
+      "Industry AI adoption comparison chart across different sectors, professional bar chart design",
+      "Technology maturity matrix showing AI readiness by industry, color-coded grid visualization",
+      "Adoption timeline showing progression across industries over time, professional timeline design",
+      "Market size and growth projections for AI adoption, comprehensive business graphics"
+    ],
+    "visualizations": [
+      "Industry adoption comparison",
+      "Technology maturity matrix",
+      "Market growth projections",
+      "Sector performance dashboard"
+    ]
+  }
+}

@@ -1,9 +1,10 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users, Target, Eye, Award } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { MeetingBookingModal } from "@/components/MeetingBookingModal";
+import { Button } from "@/components/ui/button";
 
 const About = () => {
   const teamMembers = [
@@ -30,10 +31,6 @@ const About = () => {
     { year: "2024", event: "500+ Solutions", description: "Reached milestone of 500+ AI solutions deployed" },
     { year: "2024", event: "95% Success Rate", description: "Achieved industry-leading 95% project success rate" }
   ];
-
-  const handleScheduleConsultation = () => {
-    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
-  };
 
   const handleViewWork = () => {
     window.location.href = "/case-studies";
@@ -203,13 +200,12 @@ const About = () => {
             Join 150+ companies that have already accelerated their growth with our AI solutions.
           </p>
           <div className="flex gap-4 justify-center">
-            <Button 
-              size="lg" 
+            <MeetingBookingModal 
+              triggerText="Start Your AI Journey"
+              triggerSize="lg"
               className="bg-gradient-primary hover:opacity-90"
-              onClick={handleScheduleConsultation}
-            >
-              Start Your AI Journey
-            </Button>
+              serviceType="About Us Inquiry"
+            />
             <Button 
               size="lg" 
               variant="outline"

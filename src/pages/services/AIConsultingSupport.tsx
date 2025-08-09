@@ -1,17 +1,14 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle, ArrowRight, Users, Lightbulb, Target, BookOpen, PhoneCall, Headphones } from "lucide-react";
+import { MeetingBookingModal } from "@/components/MeetingBookingModal";
+import { Button } from "@/components/ui/button";
 
 const AIConsultingSupport = () => {
   const navigate = useNavigate();
-
-  const handleScheduleConsultation = () => {
-    window.open("https://calendly.com/vikram-agentic-ai/30min", "_blank");
-  };
 
   const handleContactUs = () => {
     navigate("/contact");
@@ -168,14 +165,15 @@ const AIConsultingSupport = () => {
             From strategy development to ongoing support, our AI experts help you navigate the complex world of artificial intelligence with confidence.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              onClick={handleScheduleConsultation}
+            <MeetingBookingModal 
+              triggerText="Get Expert AI Guidance"
+              triggerSize="lg"
               className="bg-gradient-primary hover:opacity-90"
+              serviceType="AI Consulting & Support"
             >
               Get Expert AI Guidance
               <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            </MeetingBookingModal>
             <Button 
               size="lg" 
               variant="outline" 
@@ -298,13 +296,12 @@ const AIConsultingSupport = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button 
+                  <MeetingBookingModal 
+                    triggerText="Choose Plan"
                     className="w-full"
-                    variant={tier.popular ? "default" : "outline"}
-                    onClick={handleScheduleConsultation}
-                  >
-                    Choose Plan
-                  </Button>
+                    triggerVariant={tier.popular ? "default" : "outline"}
+                    serviceType={tier.name}
+                  />
                 </CardContent>
               </Card>
             ))}
@@ -347,13 +344,12 @@ const AIConsultingSupport = () => {
                   </div>
                 ))}
               </div>
-              <Button 
-                variant="secondary" 
+              <MeetingBookingModal 
+                triggerText="Start Your AI Journey"
+                triggerVariant="secondary"
                 className="w-full mt-6"
-                onClick={handleScheduleConsultation}
-              >
-                Start Your AI Journey
-              </Button>
+                serviceType="AI Consulting & Support"
+              />
             </div>
           </div>
         </div>
@@ -425,13 +421,12 @@ const AIConsultingSupport = () => {
             Get expert guidance from our AI consultants and ensure your AI initiatives deliver maximum value.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg"
-              variant="secondary"
-              onClick={handleScheduleConsultation}
-            >
-              Schedule Free Consultation
-            </Button>
+            <MeetingBookingModal 
+              triggerText="Schedule Free Consultation"
+              triggerSize="lg"
+              triggerVariant="secondary"
+              serviceType="AI Consulting & Support"
+            />
             <Button 
               size="lg"
               variant="outline"
