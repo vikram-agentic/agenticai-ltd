@@ -17,6 +17,7 @@ import AdminLayout from "./components/AdminLayout";
 import AdminLogin from "./pages/admin/AdminLogin";
 import Dashboard from "./pages/admin/Dashboard";
 import ContentManager from "./pages/admin/ContentManager";
+import ContentGenerator from "./pages/admin/ContentGenerator";
 import WebsiteManager from "./pages/admin/WebsiteManager";
 import NewsletterManager from "./pages/admin/NewsletterManager";
 import ChatbotManager from "./pages/admin/ChatbotManager";
@@ -74,6 +75,7 @@ const App = () => (
           <Route path="/admin-agentic/login" element={<AdminLogin />} />
           <Route path="/admin-agentic" element={<AdminLayout><Dashboard /></AdminLayout>} />
           <Route path="/admin-agentic/content" element={<AdminLayout><ContentManager /></AdminLayout>} />
+          <Route path="/admin-agentic/content-generator" element={<AdminLayout><ContentGenerator /></AdminLayout>} />
           <Route path="/admin-agentic/website" element={<AdminLayout><WebsiteManager /></AdminLayout>} />
           <Route path="/admin-agentic/chatbot" element={<AdminLayout><ChatbotManager /></AdminLayout>} />
           <Route path="/admin-agentic/contacts" element={<AdminLayout><ContactsManager /></AdminLayout>} />

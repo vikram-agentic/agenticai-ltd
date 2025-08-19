@@ -37,7 +37,10 @@ CREATE TABLE IF NOT EXISTS public.newsletter_subscribers (
   tags TEXT[] DEFAULT '{}',
   subscribed_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   unsubscribed_at TIMESTAMP WITH TIME ZONE,
-  last_email_sent TIMESTAMP WITH TIME ZONE
+  last_email_sent TIMESTAMP WITH TIME ZONE,
+  notes TEXT,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
 
 -- Create newsletter_campaigns table for Newsletter Manager
@@ -46,12 +49,20 @@ CREATE TABLE IF NOT EXISTS public.newsletter_campaigns (
   title TEXT NOT NULL,
   subject TEXT NOT NULL,
   content TEXT NOT NULL,
-  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'scheduled', 'sent', 'failed')),
+  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'scheduled', 'sent', 'failed', 'cancelled')),
   scheduled_at TIMESTAMP WITH TIME ZONE,
   sent_at TIMESTAMP WITH TIME ZONE,
-  sent_count INTEGER DEFAULT 0,
+  recipient_count INTEGER DEFAULT 0,
   open_count INTEGER DEFAULT 0,
   click_count INTEGER DEFAULT 0,
+  bounce_count INTEGER DEFAULT 0,
+  unsubscribe_count INTEGER DEFAULT 0,
+  template_id TEXT,
+  sender_name TEXT DEFAULT 'Agentic AI',
+  sender_email TEXT DEFAULT 'info@agentic-ai.ltd',
+  preview_text TEXT,
+  tags TEXT[] DEFAULT '{}',
+  target_audience JSONB DEFAULT '{}',
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
@@ -125,6 +136,11 @@ CREATE TRIGGER update_page_templates_updated_at
 
 CREATE TRIGGER update_newsletter_campaigns_updated_at
     BEFORE UPDATE ON public.newsletter_campaigns
+    FOR EACH ROW
+    EXECUTE FUNCTION update_admin_tables_updated_at();
+
+CREATE TRIGGER update_newsletter_subscribers_updated_at
+    BEFORE UPDATE ON public.newsletter_subscribers
     FOR EACH ROW
     EXECUTE FUNCTION update_admin_tables_updated_at();
 

@@ -69,7 +69,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
     setIsLoading(true);
 
     try {
-      const response = await supabase.functions.invoke('chatbot-handler', {
+      const response = await supabase.functions.invoke('chatbot-agent', {
         body: {
           message: inputMessage,
           sessionId,

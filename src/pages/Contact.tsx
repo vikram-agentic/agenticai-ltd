@@ -49,24 +49,36 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("https://script.google.com/macros/s/AKfycbxOI4jsKWzon1-Pmr5O_e8l4ZaKnK3DwaXKonzwEEMWf-amnVAR8ddaIFBu3wtwrLOh/exec", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams(formData),
+      // Show immediate loading feedback
+      const loadingToast = toast({
+        title: "Sending your message...",
+        description: "Please wait while we process your inquiry.",
       });
 
-      const result = await response.json();
+      // Use the new contact-handler function
+      const { data, error } = await supabase.functions.invoke('contact-handler', {
+        body: formData
+      });
 
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to submit contact form');
-      }
-      
+      if (error) throw error;
+
+      // Show success with detailed feedback
       toast({
-        title: "Message Sent Successfully!",
-        description: "Your message has been sent. We'll get back to you within 24 hours.",
+        title: "✅ Message Sent Successfully!",
+        description: data.userAcknowledgmentSent 
+          ? "Check your email for confirmation. We'll respond within 24 hours!"
+          : "Your message has been received. We'll get back to you within 24 hours.",
       });
+
+      // Show additional confirmation if both emails were sent
+      if (data.adminAlertSent && data.userAcknowledgmentSent) {
+        setTimeout(() => {
+          toast({
+            title: "📧 Emails Sent Successfully!",
+            description: `Admin notified ✅ | Confirmation sent to you ✅ | From: ${data.from}`,
+          });
+        }, 1000);
+      }
 
       // Reset form
       setFormData({
@@ -81,8 +93,8 @@ const Contact = () => {
     } catch (error: any) {
       console.error('Contact form submission error:', error);
       toast({
-        title: "Error Sending Message",
-        description: error.message || "Please try again or contact us directly.",
+        title: "❌ Error Sending Message",
+        description: error.message || "Please try again or contact us directly at info@agentic-ai.ltd",
         variant: "destructive",
       });
     } finally {

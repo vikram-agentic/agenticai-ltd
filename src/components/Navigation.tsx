@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Phone, Mail, Linkedin } from "lucide-react";
 import { MeetingBookingModal } from "./MeetingBookingModal";
 import {
   NavigationMenu,
@@ -28,6 +28,38 @@ const Navigation = () => {
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      {/* Top Contact Bar */}
+      <div className="border-b border-border/40 bg-muted/20">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-end items-center py-2 space-x-6">
+            <div className="hidden sm:flex items-center space-x-4 text-sm text-muted-foreground">
+              <a 
+                href="mailto:info@agentic-ai.ltd" 
+                className="flex items-center space-x-1 hover:text-primary transition-colors"
+              >
+                <Mail className="h-3 w-3" />
+                <span>info@agentic-ai.ltd</span>
+              </a>
+              <a 
+                href="tel:+447771970567" 
+                className="flex items-center space-x-1 hover:text-primary transition-colors"
+              >
+                <Phone className="h-3 w-3" />
+                <span>+44 7771 970567</span>
+              </a>
+              <a 
+                href="https://linkedin.com/company/agentic-ai-ltd" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center space-x-1 hover:text-primary transition-colors"
+              >
+                <Linkedin className="h-3 w-3" />
+                <span>LinkedIn</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}

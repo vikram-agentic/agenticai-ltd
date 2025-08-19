@@ -4,8 +4,9 @@ import { Calendar, Clock, User, Mail, Phone, Building, FileText, CheckCircle } f
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { useToast } from './ui/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
-// Define the structure of a slot returned by our Apps Script
+// Define the structure of a slot returned by our meeting scheduler
 interface AvailableSlot {
   start_time: string;
   end_time: string;
@@ -25,8 +26,6 @@ interface MeetingSchedulerProps {
   onBookingComplete?: (booking: any) => void;
   className?: string;
 }
-
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzGdgPqvPbdxzMICTufbva2MWDUFkbZ9vq3NmOQWmncvdfpbia5BZJSNe1qaKmDilL47g/exec';
 
 export function MeetingScheduler({ onBookingComplete, className = "" }: MeetingSchedulerProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -61,8 +60,16 @@ export function MeetingScheduler({ onBookingComplete, className = "" }: MeetingS
     setIsLoading(true);
     try {
       const startDate = format(selectedDate, 'yyyy-MM-dd');
-      const response = await fetch(`${APPS_SCRIPT_URL}?date=${startDate}`);
-      const data = await response.json();
+      
+      // Use our new meeting-scheduler-handler function
+      const { data, error } = await supabase.functions.invoke('meeting-scheduler-handler', {
+        body: {
+          action: 'get_slots',
+          date: startDate
+        }
+      });
+
+      if (error) throw error;
 
       if (!data.success) {
         throw new Error(data.error || 'Failed to load available slots.');
@@ -86,28 +93,59 @@ export function MeetingScheduler({ onBookingComplete, className = "" }: MeetingS
     if (!selectedSlot) return;
     setIsLoading(true);
     try {
-      const response = await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
+      // Show immediate loading feedback
+      const loadingToast = toast({
+        title: "Booking your meeting...",
+        description: "Please wait while we confirm your appointment and send notifications.",
+      });
+
+      // Use our new meeting-scheduler-handler function
+      const { data, error } = await supabase.functions.invoke('meeting-scheduler-handler', {
+        body: {
+          action: 'book_meeting',
+          user_name: bookingForm.user_name,
+          user_email: bookingForm.user_email,
+          user_phone: bookingForm.user_phone,
+          company: bookingForm.company,
+          service_interest: bookingForm.service_interest,
+          notes: bookingForm.notes,
           startTime: selectedSlot.start_time,
           endTime: selectedSlot.end_time,
           summary: `Consultation: ${bookingForm.user_name}`,
-          description: `Service of Interest: ${bookingForm.service_interest}\nCompany: ${bookingForm.company}\nPhone: ${bookingForm.user_phone}\n\nNotes:\n${bookingForm.notes}`,
-          attendees: [{ email: bookingForm.user_email }],
-        }),
+        }
       });
-      const data = await response.json();
+
+      if (error) throw error;
+
       if (!data.success) {
         throw new Error(data.error || 'Failed to book the meeting.');
       }
+
+      // Show success with detailed feedback
+      toast({
+        title: "🎉 Meeting Booked Successfully!",
+        description: data.userConfirmationSent 
+          ? "Check your email for confirmation. We've also notified our team!"
+          : "Your meeting has been booked. Confirmation emails are being sent.",
+      });
+
+      // Show additional confirmation if both emails were sent
+      if (data.adminNotificationSent && data.userConfirmationSent) {
+        setTimeout(() => {
+          toast({
+            title: "📧 Notifications Sent Successfully!",
+            description: `Admin notified ✅ | Confirmation sent to you ✅ | From: ${data.from}`,
+          });
+        }, 1000);
+      }
+
       setStep('confirmation');
       onBookingComplete?.(data.event);
     } catch (error) {
       console.error('Error booking meeting:', error);
       toast({
-        title: "Booking Failed",
-        description: error instanceof Error ? error.message : "Could not book the meeting.",
+        title: "❌ Booking Failed",
+        description: error instanceof Error ? error.message : "Could not book the meeting. Please contact us directly.",
         variant: "destructive"
       });
     } finally {

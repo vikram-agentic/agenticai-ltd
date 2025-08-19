@@ -1,11 +1,83 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin, Calendar, Linkedin, Twitter } from "lucide-react";
+import { Mail, Phone, MapPin, Calendar, Linkedin } from "lucide-react";
 import { MeetingBookingModal } from "./MeetingBookingModal";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Footer = () => {
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const { toast } = useToast();
+
   const handleEmailContact = () => {
     window.location.href = "mailto:info@agentic-ai.ltd";
+  };
+
+  const handleNewsletterSubscription = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!newsletterEmail.trim()) {
+      toast({
+        title: "Email Required",
+        description: "Please enter your email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newsletterEmail)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubscribing(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('gmail-newsletter', {
+        body: {
+          action: 'subscribe',
+          email: newsletterEmail.trim(),
+          source: 'footer',
+          tags: ['footer-subscriber']
+        }
+      });
+
+      if (error) {
+        throw new Error(error.message || 'Failed to subscribe to newsletter');
+      }
+
+      if (data.alreadySubscribed) {
+        toast({
+          title: "Already Subscribed!",
+          description: data.message,
+        });
+      } else {
+        toast({
+          title: "Successfully Subscribed!",
+          description: data.message,
+        });
+      }
+
+      setNewsletterEmail("");
+    } catch (error: any) {
+      console.error('Newsletter subscription error:', error);
+      toast({
+        title: "Subscription Failed",
+        description: error.message || "Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubscribing(false);
+    }
   };
 
   const quickLinks = [
@@ -108,29 +180,57 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact Info */}
-          <div className="space-y-4">
-            <h3 className="font-heading font-bold">Contact</h3>
-            <ul className="space-y-3">
-              {contactInfo.map((info, index) => (
-                <li key={index} className="flex items-start gap-3">
-                  <info.icon className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                  <div>
-                    <div className="text-xs text-muted-foreground">{info.label}</div>
-                    {info.action ? (
-                      <button
-                        onClick={info.action}
-                        className="text-sm hover:text-primary transition-colors text-left"
-                      >
-                        {info.value}
-                      </button>
-                    ) : (
-                      <div className="text-sm">{info.value}</div>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
+          {/* Newsletter & Contact */}
+          <div className="space-y-6">
+            {/* Newsletter Signup */}
+            <div className="space-y-3">
+              <h3 className="font-heading font-bold">Stay Updated</h3>
+              <p className="text-muted-foreground text-sm">
+                Get AI insights delivered to your inbox.
+              </p>
+              <form onSubmit={handleNewsletterSubscription} className="space-y-2">
+                <Input 
+                  placeholder="Enter your email" 
+                  type="email"
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  className="text-sm" 
+                  disabled={isSubscribing}
+                />
+                <Button 
+                  type="submit"
+                  size="sm"
+                  className="w-full bg-gradient-primary hover:opacity-90"
+                  disabled={isSubscribing}
+                >
+                  {isSubscribing ? "Subscribing..." : "Subscribe"}
+                </Button>
+              </form>
+            </div>
+
+            {/* Contact Info */}
+            <div className="space-y-3">
+              <h3 className="font-heading font-bold">Contact</h3>
+              <ul className="space-y-2">
+                {contactInfo.slice(0, 2).map((info, index) => (
+                  <li key={index} className="flex items-start gap-2">
+                    <info.icon className="h-3 w-3 text-primary mt-1 flex-shrink-0" />
+                    <div>
+                      {info.action ? (
+                        <button
+                          onClick={info.action}
+                          className="text-xs hover:text-primary transition-colors text-left"
+                        >
+                          {info.value}
+                        </button>
+                      ) : (
+                        <div className="text-xs">{info.value}</div>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 
@@ -159,6 +259,14 @@ const Footer = () => {
               className="text-muted-foreground hover:text-primary"
             >
               <Mail className="h-4 w-4" />
+            </Button>
+            <Button 
+              onClick={() => window.open("https://linkedin.com/company/agentic-ai-ltd", "_blank")}
+              variant="ghost" 
+              size="sm"
+              className="text-muted-foreground hover:text-primary"
+            >
+              <Linkedin className="h-4 w-4" />
             </Button>
           </div>
         </div>

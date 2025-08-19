@@ -1,199 +1,307 @@
-import { createServer, IncomingMessage, ServerResponse } from 'http';
-import { createClient } from '@supabase/supabase-js';
-import { GoogleGenAI } from '@google/genai';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const geminiApiKey = process.env.GEMINI_API_KEY as string;
-const bflApiKey = process.env.BFL_API_KEY as string;
-const supabaseUrl = process.env.SUPABASE_URL as string;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY as string;
+interface ContentRequest {
+  requestId: string;
+  contentType: string;
+  targetKeywords: string[];
+  customInstructions?: string;
+  contentLength: string;
+  seoFocus: boolean;
+  brandAwareness: boolean;
+}
 
-const ai = new GoogleGenAI({apiKey: geminiApiKey});
-
-const callGemini = async (prompt: string, model: string = 'gemini-1.5-pro-latest') => {
-  const result = await ai.models.generateContentStream({
-    model,
-    contents: [{role: 'user', parts: [{text: prompt}]}],
-  });
-  let text = '';
-  for await (const chunk of result) {
-    text += chunk.text;
-  }
-  return text;
-};
-
-const callFluxApi = async (prompt: string, aspect_ratio: string = "1:1") => {
-    const request = await fetch('https://api.bfl.ai/v1/flux-kontext-pro', {
-        method: 'POST',
-        headers: {
-            'accept': 'application/json',
-            'x-key': bflApiKey,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            prompt,
-            aspect_ratio,
-        }),
-    });
-
-    const response = await request.json();
-    const { id, polling_url } = response as { id: string; polling_url: string };
-
-    let result;
-    while (true) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        const pollResponse = await fetch(polling_url, {
-            headers: {
-                'accept': 'application/json',
-                'x-key': bflApiKey,
-            },
-        });
-        result = await pollResponse.json() as { status: string; result: { sample: string } };
-        if (result.status === "Ready") {
-            return result.result.sample;
-        } else if (["Error", "Failed"].includes(result.status)) {
-            throw new Error(`Image generation failed: ${JSON.stringify(result)}`);
-        }
-    }
-};
-
-const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
+serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    res.writeHead(204, corsHeaders);
-    res.end();
-    return;
+    return new Response(null, { headers: corsHeaders });
   }
 
+  let requestBody: ContentRequest;
+  
   try {
-    if (!geminiApiKey || !bflApiKey || !supabaseUrl || !supabaseServiceKey) {
-      throw new Error('API keys or Supabase credentials are not configured');
-    }
-
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    let body = '';
-    req.on('data', (chunk: Buffer) => {
-        body += chunk.toString();
-    });
-    req.on('end', async () => {
-        const { topic } = JSON.parse(body);
+    requestBody = await req.json();
+    const {
+      requestId,
+      contentType,
+      targetKeywords,
+      customInstructions,
+      contentLength,
+      seoFocus,
+      brandAwareness
+    } = requestBody;
 
-        if (!topic) {
-          throw new Error('Missing required field: topic');
+    if (!requestId || !contentType || !targetKeywords || targetKeywords.length === 0) {
+      throw new Error('Missing required parameters');
+    }
+
+    console.log('Generating content for request:', requestId);
+
+    // Update request status
+    await supabase
+      .from('content_requests')
+      .update({ status: 'processing', progress: 25 })
+      .eq('id', requestId);
+
+    // Real Gemini API call
+    const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
+    if (!GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY not configured');
+    }
+
+    const wordCount = contentLength.includes('1500') ? '1500+' : 
+                     contentLength.includes('2500') ? '2500+' :
+                     contentLength.includes('3000') ? '3000+' :
+                     contentLength.includes('5000') ? '5000+' :
+                     contentLength.includes('10000') ? '10000+' : '3000+';
+
+    const prompt = `You are an expert content writer and SEO specialist. Create comprehensive, engaging content for:
+
+Content Type: ${contentType}
+Target Keywords: ${targetKeywords.join(', ')}
+Content Length: ${wordCount} words
+SEO Focus: ${seoFocus ? 'Yes - Optimize for search engines' : 'No'}
+Brand Awareness: ${brandAwareness ? 'Yes - Include Agentic AI brand mentions' : 'No'}
+Custom Instructions: ${customInstructions || 'None'}
+
+BRAND INFORMATION (use if brandAwareness is true):
+- Company: Agentic AI AMRO Ltd
+- Location: Tunbridge Wells, Kent, UK
+- Email: info@agentic-ai.ltd
+- Website: https://agentic-ai.ltd
+- Services: AI automation, business transformation, intelligent decision-making
+- Expertise: Business AI solutions, process automation, AI strategy consulting
+
+CONTENT REQUIREMENTS:
+1. Create compelling, well-structured content
+2. Include proper headings (H1, H2, H3)
+3. Use target keywords naturally throughout
+4. Include actionable insights and practical tips
+5. Add relevant examples and case studies
+6. Ensure content is engaging and valuable
+7. Include a compelling introduction and conclusion
+8. Add call-to-action sections where appropriate
+
+${seoFocus ? `
+SEO REQUIREMENTS:
+- Include primary keyword in title and first paragraph
+- Use semantic keywords and related terms
+- Add internal linking suggestions
+- Include meta description suggestions
+- Optimize for featured snippets with Q&A sections
+- Include schema markup suggestions
+` : ''}
+
+Return the response in JSON format:
+{
+  "title": "Compelling SEO-optimized title",
+  "content": "Full content with HTML formatting including headings, paragraphs, lists",
+  "metaDescription": "SEO meta description (150-160 characters)",
+  "excerpt": "Brief excerpt (150 words max)",
+  "seoTags": ["keyword1", "keyword2", "keyword3"],
+  "categories": ["category1", "category2"],
+  "readingTime": "estimated reading time in minutes",
+  "wordCount": "actual word count"
+}
+
+Generate high-quality, professional content that provides real value to readers while meeting all SEO requirements.`;
+
+    const geminiResponse = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: prompt
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.7,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 8192,
+          }
+        })
+      }
+    );
+
+    if (!geminiResponse.ok) {
+      const errorText = await geminiResponse.text();
+      console.error('Gemini API error:', errorText);
+      throw new Error(`Gemini API failed: ${geminiResponse.status}`);
+    }
+
+    const geminiData = await geminiResponse.json();
+    
+    if (!geminiData.candidates || !geminiData.candidates[0]?.content?.parts?.[0]?.text) {
+      throw new Error('No content generated by Gemini');
+    }
+
+    const generatedText = geminiData.candidates[0].content.parts[0].text;
+    console.log('Generated content length:', generatedText.length);
+
+    // Parse JSON from generated text
+    let contentData;
+    try {
+      const jsonMatch = generatedText.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        contentData = JSON.parse(jsonMatch[0]);
+      } else {
+        throw new Error('No JSON found in response');
+      }
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError);
+      
+      // Fallback: Extract content manually
+      const lines = generatedText.split('\n');
+      let title = '';
+      let content = '';
+      
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line && !title) {
+          title = line.replace(/^#\s*/, '').replace(/"/g, '');
+          break;
         }
+      }
+      
+      content = generatedText;
+      
+      contentData = {
+        title: title || `${targetKeywords[0]} - Comprehensive Guide`,
+        content: content,
+        metaDescription: `Learn everything about ${targetKeywords[0]}. Expert insights, practical tips, and proven strategies.`,
+        excerpt: content.substring(0, 150) + '...',
+        seoTags: targetKeywords.slice(0, 5),
+        categories: [contentType === 'blog' ? 'Blog' : 'Pages'],
+        readingTime: Math.ceil(content.split(' ').length / 200) + ' min',
+        wordCount: content.split(' ').length.toString()
+      };
+    }
 
-        // 1. Keyword Research
-        const keywordResearchPrompt = `
-        You are an expert SEO keyword research specialist with 15+ years of experience in digital marketing and search engine optimization. Your expertise includes understanding search intent, competition analysis, keyword difficulty assessment, and trend identification across all industries.
+    // Validate and ensure all required fields
+    if (!contentData.title) {
+      contentData.title = `${targetKeywords[0]} - Complete Guide ${new Date().getFullYear()}`;
+    }
+    if (!contentData.content) {
+      throw new Error('No content was generated');
+    }
+    if (!contentData.metaDescription) {
+      contentData.metaDescription = `Discover ${targetKeywords[0]} strategies and best practices. Expert insights and actionable tips for success.`;
+    }
+    if (!contentData.seoTags || !Array.isArray(contentData.seoTags)) {
+      contentData.seoTags = targetKeywords.slice(0, 5);
+    }
+    if (!contentData.categories || !Array.isArray(contentData.categories)) {
+      contentData.categories = [contentType === 'blog' ? 'AI & Technology' : 'Business Solutions'];
+    }
 
-        Your primary objective is to conduct comprehensive keyword research that identifies high-opportunity keywords with optimal search volume, manageable competition, and strong commercial intent.
-        
-        When provided with a seed keyword or topic, conduct this comprehensive analysis and present actionable insights for content strategy development.
-        
-        Topic: ${topic}
-        `;
-        const keywordResearchResult = await callGemini(keywordResearchPrompt);
+    // Update progress
+    await supabase
+      .from('content_requests')
+      .update({ status: 'processing', progress: 75 })
+      .eq('id', requestId);
 
-        // 2. SERP Analysis
-        const serpAnalysisPrompt = `
-        You are an elite SERP analysis expert with deep expertise in search engine result page dynamics, ranking factors, and competitive intelligence. You possess advanced analytical skills to dissect search results and extract actionable insights for SEO strategy.
+    // Save generated content to database
+    const { data: savedContent, error: saveError } = await supabase
+      .from('generated_content')
+      .insert({
+        request_id: requestId,
+        title: contentData.title,
+        content: contentData.content,
+        meta_description: contentData.metaDescription,
+        excerpt: contentData.excerpt || contentData.content.substring(0, 150) + '...',
+        seo_tags: contentData.seoTags,
+        categories: contentData.categories,
+        content_type: contentType,
+        target_keywords: targetKeywords,
+        status: 'generated',
+        word_count: parseInt(contentData.wordCount || '0') || contentData.content.split(' ').length,
+        reading_time: parseInt(contentData.readingTime?.replace(/\D/g, '') || '5') || Math.ceil(contentData.content.split(' ').length / 200),
+        primary_keyword: targetKeywords[0],
+        generated_at: new Date().toISOString()
+      })
+      .select()
+      .single();
 
-        Retrieve, analyze, and report on the top 20 organic search results for target keywords, providing comprehensive competitive intelligence and actionable SEO recommendations.
-        
-        Topic: ${topic}
-        `;
-        const serpAnalysisResult = await callGemini(serpAnalysisPrompt);
+    if (saveError) {
+      console.error('Save error:', saveError);
+      throw new Error('Failed to save generated content');
+    }
 
-        // 3. Title, Meta, Slug, Tags Generation
-        const titleMetaPrompt = `
-        You are a world-class SEO copywriter and conversion rate optimization expert specializing in creating high-CTR titles, compelling meta descriptions, and optimized metadata that drive both rankings and clicks.
+    // Update request to completed
+    await supabase
+      .from('content_requests')
+      .update({ 
+        status: 'completed', 
+        progress: 100,
+        completed_at: new Date().toISOString()
+      })
+      .eq('id', requestId);
 
-        Create title tags, meta descriptions, URL slugs, categories, and tags that achieve #1 rankings while maximizing click-through rates from search results.
-        
-        Topic: ${topic}
-        `;
-        const titleMetaResult = await callGemini(titleMetaPrompt);
-        const { title, metaDescription, slug, tags, category } = JSON.parse(titleMetaResult);
+    console.log('Content generation completed for request:', requestId);
 
-        // 4. Article Outline Generation
-        const outlinePrompt = `
-        You are an elite SEO content strategist and information architect with expertise in creating comprehensive, search-optimized article outlines that consistently achieve top rankings. Your outlines serve as blueprints for content that dominates search results through superior structure, comprehensive coverage, and strategic optimization.
-
-        Create detailed, SEO-enhanced article outlines that address all aspects of user intent while incorporating advanced on-page optimization strategies and competitive intelligence insights.
-        
-        Topic: ${topic}
-        `;
-        const outlineResult = await callGemini(outlinePrompt);
-
-        // 5. Article Generation
-        const articlePrompt = `
-        You are an elite SEO content creator and digital marketing expert with 20+ years of experience producing search-dominating articles. You specialize in creating comprehensive, authoritative content that consistently achieves and maintains #1 rankings while delivering exceptional user value.
-
-        Create 3,000+ word, comprehensive articles that outrank all competitors through superior content quality, strategic optimization, and exceptional user value delivery.
-        
-        Topic: ${topic}
-        Outline: ${outlineResult}
-        `;
-        const articleResult = await callGemini(articlePrompt);
-
-        // 6. Image Prompt Generation
-        const imagePromptGeneratorPrompt = `
-        You are an expert image prompt generator. Based on the following article, create 5 detailed and descriptive prompts for generating images. The first prompt should be for a featured image (16:9 aspect ratio), and the other four should be for content images (4:3 aspect ratio).
-
-        Article: ${articleResult}
-        `;
-        const imagePromptsResult = await callGemini(imagePromptGeneratorPrompt);
-        const imagePrompts = JSON.parse(imagePromptsResult);
-
-        // 7. Image Generation
-        const featuredImageUrl = await callFluxApi(imagePrompts.featured_image_prompt, "16:9");
-        const contentImageUrls = await Promise.all(
-            imagePrompts.content_image_prompts.map((prompt: string) => callFluxApi(prompt, "4:3"))
-        );
-
-        // Store results in database
-        const { data: contentRecord } = await supabase
-          .from('generated_content')
-          .insert({
-            topic,
-            keyword_research: JSON.parse(keywordResearchResult),
-            serp_analysis: JSON.parse(serpAnalysisResult),
-            title,
-            meta_description: metaDescription,
-            slug,
-            tags,
-            category,
-            outline: JSON.parse(outlineResult),
-            content: articleResult,
-            featured_image_url: featuredImageUrl,
-            content_image_urls: contentImageUrls,
-            status: 'draft',
-          })
-          .select()
-          .single();
-
-        res.writeHead(200, { ...corsHeaders, 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          success: true,
-          contentData: contentRecord,
-          message: 'Content generation pipeline completed successfully!'
-        }));
+    return new Response(JSON.stringify({
+      success: true,
+      requestId,
+      contentData: {
+        id: savedContent.id,
+        title: contentData.title,
+        content: contentData.content,
+        metaDescription: contentData.metaDescription,
+        excerpt: contentData.excerpt,
+        seoTags: contentData.seoTags,
+        categories: contentData.categories,
+        wordCount: contentData.wordCount,
+        readingTime: contentData.readingTime
+      },
+      generatedAt: new Date().toISOString()
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
   } catch (error) {
-    console.error('Error in content generation pipeline:', error);
-    res.writeHead(500, { ...corsHeaders, 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ 
-      error: (error as Error).message,
-      success: false 
-    }));
-  }
-});
+    console.error('Content generation error:', error);
 
-server.listen(8000, () => {
-    console.log('Server is listening on port 8000');
+    // Update request status to failed using the already parsed requestBody
+    try {
+      if (requestBody?.requestId) {
+        const supabase = createClient(
+          Deno.env.get('SUPABASE_URL')!,
+          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+        );
+        
+        await supabase
+          .from('content_requests')
+          .update({ 
+            status: 'failed',
+            error_message: error.message,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', requestBody.requestId);
+      }
+    } catch (updateError) {
+      console.error('Failed to update request status:', updateError);
+    }
+
+    return new Response(JSON.stringify({
+      success: false,
+      error: error.message
+    }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
 });

@@ -10,6 +10,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MeetingBookingModal } from "@/components/MeetingBookingModal";
 import { Button } from "@/components/ui/button";
+import NewsletterSubscription from "@/components/NewsletterSubscription";
 import { 
   Brain,
   Zap, 
@@ -197,6 +198,33 @@ const Index = () => {
               </Button>
             </Link>
           </AnimatedSection>
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="py-20 px-4 bg-muted/30">
+        <div className="container mx-auto">
+          <AnimatedSection className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              Stay Ahead of the AI Revolution
+            </h2>
+            <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+              Get exclusive insights, case studies, and trends delivered weekly. Join 5,000+ AI leaders 
+              who rely on our newsletter for strategic guidance.
+            </p>
+          </AnimatedSection>
+          
+          <div className="flex justify-center">
+            <AnimatedSection delay={0.2}>
+              <NewsletterSubscription 
+                variant="inline"
+                source="homepage"
+                title="Join 5,000+ AI Leaders"
+                description="Weekly insights on agentic AI, automation strategies, compliance updates, and industry trends."
+                className="max-w-2xl"
+              />
+            </AnimatedSection>
+          </div>
         </div>
       </section>
 

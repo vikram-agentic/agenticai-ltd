@@ -275,18 +275,18 @@ const ChatbotManager = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Chatbot Manager</h1>
-          <p className="text-slate-400">Configure and manage AI chatbot interactions</p>
+          <h1 className="text-3xl font-bold text-gray-900">Chatbot Manager</h1>
+          <p className="text-gray-600">Configure and manage AI chatbot interactions</p>
         </div>
         <div className="flex items-center space-x-3">
           <Button 
             onClick={loadChatbotData}
             variant="outline" 
-            className="border-purple-400 text-purple-300 hover:bg-purple-500/20"
+            className="border-blue-400 text-blue-600 hover:bg-blue-50"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
             Refresh

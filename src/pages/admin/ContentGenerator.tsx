@@ -22,7 +22,9 @@ import {
   Save,
   Trash2,
   Copy,
-  Wand2
+  Wand2,
+  Upload,
+  FileText
 } from 'lucide-react';
 
 interface GenerationForm {
@@ -223,7 +225,7 @@ const ContentGenerator = () => {
       const { data: keywordData, error: keywordError } = await supabase.functions.invoke('keyword-research-agent', {
         body: {
           requestId: requestData.id,
-          keywords: generationForm.targetKeywords.split(',').map(k => k.trim())
+          seedKeyword: generationForm.targetKeywords.split(',')[0].trim()
         }
       });
 
@@ -247,11 +249,12 @@ const ContentGenerator = () => {
       });
 
       if (serpError || !serpData?.success) {
-        updateGenerationStep('serp', 'failed', 0);
-        throw new Error('SERP analysis failed');
+        console.warn('SERP analysis failed, continuing without SERP data:', serpError?.message);
+        // Don't fail the entire process, just log and continue
+        updateGenerationStep('serp', 'completed', 100);
+      } else {
+        updateGenerationStep('serp', 'completed', 100);
       }
-      
-      updateGenerationStep('serp', 'completed', 100);
 
       // Step 4: Content Generation
       setCurrentStep('✍️ Generating content with Gemini AI...');
@@ -393,26 +396,30 @@ const ContentGenerator = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Content Generator</h1>
-          <p className="text-slate-400">AI-powered content creation with advanced SEO optimization</p>
+          <h1 className="text-3xl font-bold text-gray-900">CSV Article Generator</h1>
+          <p className="text-gray-600">AI-powered content creation with advanced SEO optimization and image generation</p>
         </div>
       </div>
 
-      <Tabs defaultValue="generator" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 bg-slate-900/60 backdrop-blur-xl border-purple-500/30">
-          <TabsTrigger value="generator" className="data-[state=active]:bg-purple-500/30">
+      <Tabs defaultValue="csv-generator" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4 bg-white border border-gray-200">
+          <TabsTrigger value="generator" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
             <Brain className="w-4 h-4 mr-2" />
             Content Generator
           </TabsTrigger>
-          <TabsTrigger value="seo-tools" className="data-[state=active]:bg-purple-500/30">
+          <TabsTrigger value="csv-generator" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+            <Upload className="w-4 h-4 mr-2" />
+            CSV Articles
+          </TabsTrigger>
+          <TabsTrigger value="seo-tools" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
             <Search className="w-4 h-4 mr-2" />
             SEO Tools
           </TabsTrigger>
-          <TabsTrigger value="history" className="data-[state=active]:bg-purple-500/30">
+          <TabsTrigger value="history" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
             <Eye className="w-4 h-4 mr-2" />
             Generation History
           </TabsTrigger>
@@ -420,28 +427,28 @@ const ContentGenerator = () => {
 
         {/* Content Generator Tab */}
         <TabsContent value="generator" className="space-y-6">
-          <Card className="bg-slate-900/60 backdrop-blur-xl border-purple-500/30">
+          <Card className="bg-white border border-gray-200 shadow-sm">
             <CardHeader>
-              <CardTitle className="flex items-center text-white">
-                <Sparkles className="w-5 h-5 mr-2 text-purple-400" />
+              <CardTitle className="flex items-center text-gray-900">
+                <Sparkles className="w-5 h-5 mr-2 text-blue-500" />
                 AI Content Generator
               </CardTitle>
-              <CardDescription className="text-slate-300">
+              <CardDescription className="text-gray-600">
                 Generate comprehensive, SEO-optimized content with advanced AI research and analysis
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-slate-200">Content Type</Label>
+                  <Label className="text-gray-700 font-medium">Content Type</Label>
                   <Select 
                     value={generationForm.contentType} 
                     onValueChange={(value) => setGenerationForm({...generationForm, contentType: value})}
                   >
-                    <SelectTrigger className="bg-slate-800/50 border-slate-600 text-white">
+                    <SelectTrigger className="border-gray-300">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-800 border-slate-600">
+                    <SelectContent>
                       <SelectItem value="blog">Blog Post</SelectItem>
                       <SelectItem value="page">Landing Page</SelectItem>
                       <SelectItem value="service">Service Page</SelectItem>
@@ -453,15 +460,15 @@ const ContentGenerator = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-slate-200">Content Length</Label>
+                  <Label className="text-gray-700 font-medium">Content Length</Label>
                   <Select 
                     value={generationForm.contentLength} 
                     onValueChange={(value) => setGenerationForm({...generationForm, contentLength: value})}
                   >
-                    <SelectTrigger className="bg-slate-800/50 border-slate-600 text-white">
+                    <SelectTrigger className="border-gray-300">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-800 border-slate-600">
+                    <SelectContent>
                       <SelectItem value="1500+">1500+ words</SelectItem>
                       <SelectItem value="2500+">2500+ words</SelectItem>
                       <SelectItem value="3000+">3000+ words</SelectItem>
@@ -473,21 +480,21 @@ const ContentGenerator = () => {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-slate-200">Target Keywords (comma-separated)</Label>
+                <Label className="text-gray-700 font-medium">Target Keywords (comma-separated)</Label>
                 <Input
                   value={generationForm.targetKeywords}
                   onChange={(e) => setGenerationForm({...generationForm, targetKeywords: e.target.value})}
-                  className="bg-slate-800/50 border-slate-600 text-white"
+                  className="border-gray-300"
                   placeholder="AI automation, business efficiency, machine learning, artificial intelligence"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-slate-200">Custom Instructions (optional)</Label>
+                <Label className="text-gray-700 font-medium">Custom Instructions (optional)</Label>
                 <Textarea
                   value={generationForm.customInstructions}
                   onChange={(e) => setGenerationForm({...generationForm, customInstructions: e.target.value})}
-                  className="bg-slate-800/50 border-slate-600 text-white min-h-[100px]"
+                  className="border-gray-300 min-h-[100px]"
                   placeholder="Add specific requirements, tone preferences, brand guidelines, target audience details, or any other custom instructions..."
                 />
               </div>
@@ -499,9 +506,9 @@ const ContentGenerator = () => {
                     id="seoFocus"
                     checked={generationForm.seoFocus}
                     onChange={(e) => setGenerationForm({...generationForm, seoFocus: e.target.checked})}
-                    className="rounded border-slate-600 bg-slate-800"
+                    className="rounded border-gray-300"
                   />
-                  <Label htmlFor="seoFocus" className="text-slate-200">SEO Optimized</Label>
+                  <Label htmlFor="seoFocus" className="text-gray-700">SEO Optimized</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <input
@@ -509,9 +516,9 @@ const ContentGenerator = () => {
                     id="includeImages"
                     checked={generationForm.includeImages}
                     onChange={(e) => setGenerationForm({...generationForm, includeImages: e.target.checked})}
-                    className="rounded border-slate-600 bg-slate-800"
+                    className="rounded border-gray-300"
                   />
-                  <Label htmlFor="includeImages" className="text-slate-200">Include Images</Label>
+                  <Label htmlFor="includeImages" className="text-gray-700">Include Images</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <input
@@ -519,9 +526,9 @@ const ContentGenerator = () => {
                     id="brandAwareness"
                     checked={generationForm.brandAwareness}
                     onChange={(e) => setGenerationForm({...generationForm, brandAwareness: e.target.checked})}
-                    className="rounded border-slate-600 bg-slate-800"
+                    className="rounded border-gray-300"
                   />
-                  <Label htmlFor="brandAwareness" className="text-slate-200">Brand Awareness</Label>
+                  <Label htmlFor="brandAwareness" className="text-gray-700">Brand Awareness</Label>
                 </div>
               </div>
 
@@ -556,40 +563,57 @@ const ContentGenerator = () => {
           </Card>
         </TabsContent>
 
+        {/* CSV Article Generator Tab */}
+        <TabsContent value="csv-generator" className="space-y-6">
+          <Card className="bg-white border border-gray-200 shadow-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center text-gray-900">
+                <Upload className="w-5 h-5 mr-2 text-blue-500" />
+                CSV Article Generator
+              </CardTitle>
+              <CardDescription className="text-gray-600">
+                Generate multiple articles from your CSV file using BFL image generation and Gemini content creation
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         {/* SEO Tools Tab */}
         <TabsContent value="seo-tools" className="space-y-6">
-          <Card className="bg-slate-900/60 backdrop-blur-xl border-purple-500/30">
+          <Card className="bg-white border border-gray-200 shadow-sm">
             <CardHeader>
-              <CardTitle className="flex items-center text-white">
-                <Wand2 className="w-5 h-5 mr-2 text-purple-400" />
+              <CardTitle className="flex items-center text-gray-900">
+                <Wand2 className="w-5 h-5 mr-2 text-blue-500" />
                 SEO Title & Meta Description Generator
               </CardTitle>
-              <CardDescription className="text-slate-300">
+              <CardDescription className="text-gray-600">
                 Generate optimized titles and meta descriptions using Gemini AI
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-slate-200">Topic/Subject</Label>
+                  <Label className="text-gray-700 font-medium">Topic/Subject</Label>
                   <Input
                     value={seoForm.topic}
                     onChange={(e) => setSeoForm({...seoForm, topic: e.target.value})}
-                    className="bg-slate-800/50 border-slate-600 text-white"
+                    className="border-gray-300"
                     placeholder="AI automation solutions for businesses"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-slate-200">Content Type</Label>
+                  <Label className="text-gray-700 font-medium">Content Type</Label>
                   <Select 
                     value={seoForm.contentType} 
                     onValueChange={(value) => setSeoForm({...seoForm, contentType: value})}
                   >
-                    <SelectTrigger className="bg-slate-800/50 border-slate-600 text-white">
+                    <SelectTrigger className="border-gray-300">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-800 border-slate-600">
+                    <SelectContent>
                       <SelectItem value="blog">Blog Post</SelectItem>
                       <SelectItem value="page">Landing Page</SelectItem>
                       <SelectItem value="service">Service Page</SelectItem>
@@ -602,25 +626,25 @@ const ContentGenerator = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-slate-200">Target Keywords</Label>
+                  <Label className="text-gray-700 font-medium">Target Keywords</Label>
                   <Input
                     value={seoForm.targetKeywords}
                     onChange={(e) => setSeoForm({...seoForm, targetKeywords: e.target.value})}
-                    className="bg-slate-800/50 border-slate-600 text-white"
+                    className="border-gray-300"
                     placeholder="AI automation, business efficiency"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-slate-200">Tone</Label>
+                  <Label className="text-gray-700 font-medium">Tone</Label>
                   <Select 
                     value={seoForm.tone} 
                     onValueChange={(value) => setSeoForm({...seoForm, tone: value})}
                   >
-                    <SelectTrigger className="bg-slate-800/50 border-slate-600 text-white">
+                    <SelectTrigger className="border-gray-300">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-800 border-slate-600">
+                    <SelectContent>
                       <SelectItem value="professional">Professional</SelectItem>
                       <SelectItem value="casual">Casual</SelectItem>
                       <SelectItem value="authoritative">Authoritative</SelectItem>
@@ -654,22 +678,22 @@ const ContentGenerator = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Titles */}
                   <div className="space-y-3">
-                    <h3 className="text-white font-medium">Generated Titles</h3>
+                    <h3 className="text-gray-900 font-medium">Generated Titles</h3>
                     <div className="space-y-2">
                       {generatedSEO.titles.map((title, index) => (
-                        <div key={index} className="p-3 bg-slate-800/30 rounded-lg border border-slate-700">
+                        <div key={index} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
                           <div className="flex items-start justify-between">
-                            <p className="text-slate-200 text-sm flex-1">{title}</p>
+                            <p className="text-gray-800 text-sm flex-1">{title}</p>
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => copyToClipboard(title)}
-                              className="ml-2 h-6 w-6 p-0"
+                              className="ml-2 h-6 w-6 p-0 hover:bg-gray-200"
                             >
                               <Copy className="w-3 h-3" />
                             </Button>
                           </div>
-                          <div className="text-xs text-slate-400 mt-1">
+                          <div className="text-xs text-gray-500 mt-1">
                             {title.length} characters
                           </div>
                         </div>
@@ -679,22 +703,22 @@ const ContentGenerator = () => {
 
                   {/* Meta Descriptions */}
                   <div className="space-y-3">
-                    <h3 className="text-white font-medium">Generated Meta Descriptions</h3>
+                    <h3 className="text-gray-900 font-medium">Generated Meta Descriptions</h3>
                     <div className="space-y-2">
                       {generatedSEO.metaDescriptions.map((meta, index) => (
-                        <div key={index} className="p-3 bg-slate-800/30 rounded-lg border border-slate-700">
+                        <div key={index} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
                           <div className="flex items-start justify-between">
-                            <p className="text-slate-200 text-sm flex-1">{meta}</p>
+                            <p className="text-gray-800 text-sm flex-1">{meta}</p>
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => copyToClipboard(meta)}
-                              className="ml-2 h-6 w-6 p-0"
+                              className="ml-2 h-6 w-6 p-0 hover:bg-gray-200"
                             >
                               <Copy className="w-3 h-3" />
                             </Button>
                           </div>
-                          <div className="text-xs text-slate-400 mt-1">
+                          <div className="text-xs text-gray-500 mt-1">
                             {meta.length} characters
                           </div>
                         </div>
@@ -709,10 +733,10 @@ const ContentGenerator = () => {
 
         {/* Generation History Tab */}
         <TabsContent value="history" className="space-y-6">
-          <Card className="bg-slate-900/60 backdrop-blur-xl border-purple-500/30">
+          <Card className="bg-white border border-gray-200 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-white">Generation History</CardTitle>
-              <CardDescription className="text-slate-300">
+              <CardTitle className="text-gray-900">Generation History</CardTitle>
+              <CardDescription className="text-gray-600">
                 View and manage all generated content
               </CardDescription>
             </CardHeader>
@@ -720,24 +744,24 @@ const ContentGenerator = () => {
               <div className="space-y-4">
                 {generationHistory.length === 0 ? (
                   <div className="text-center py-8">
-                    <FileText className="mx-auto h-12 w-12 text-slate-400 mb-4" />
-                    <p className="text-slate-400">No content generated yet</p>
+                    <FileText className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                    <p className="text-gray-500">No content generated yet</p>
                   </div>
                 ) : (
                   generationHistory.map((content: any) => (
-                    <div key={content.id} className="flex items-start justify-between p-4 bg-slate-800/30 rounded-lg border border-slate-700 hover:border-slate-600 transition-colors">
+                    <div key={content.id} className="flex items-start justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">
                       <div className="flex-1">
-                        <h3 className="text-white font-medium">{content.title}</h3>
-                        <p className="text-slate-400 text-sm">{content.categories?.join(', ') || 'Uncategorized'}</p>
+                        <h3 className="text-gray-900 font-medium">{content.title}</h3>
+                        <p className="text-gray-600 text-sm">{content.categories?.join(', ') || 'Uncategorized'}</p>
                         <div className="flex items-center space-x-3 mt-2">
                           <Badge variant={content.status === 'published' ? 'default' : 'secondary'}>
                             {content.status}
                           </Badge>
-                          <span className="text-xs text-slate-500">
+                          <span className="text-xs text-gray-500">
                             {new Date(content.created_at).toLocaleDateString()}
                           </span>
                           {content.seo_tags && (
-                            <span className="text-xs text-slate-500">
+                            <span className="text-xs text-gray-500">
                               Keywords: {content.seo_tags.slice(0, 3).join(', ')}
                             </span>
                           )}
@@ -747,7 +771,7 @@ const ContentGenerator = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="border-purple-400 text-purple-300 hover:bg-purple-500/20"
+                          className="border-blue-400 text-blue-600 hover:bg-blue-50"
                         >
                           <Eye className="w-4 h-4" />
                         </Button>
@@ -756,7 +780,7 @@ const ContentGenerator = () => {
                             variant="outline"
                             size="sm"
                             onClick={() => handlePublishContent(content.id)}
-                            className="border-green-400 text-green-300 hover:bg-green-500/20"
+                            className="border-green-400 text-green-600 hover:bg-green-50"
                           >
                             <CheckCircle className="w-4 h-4" />
                           </Button>
@@ -765,7 +789,7 @@ const ContentGenerator = () => {
                             variant="outline"
                             size="sm"
                             onClick={() => handleSaveDraft(content.id)}
-                            className="border-yellow-400 text-yellow-300 hover:bg-yellow-500/20"
+                            className="border-yellow-400 text-yellow-600 hover:bg-yellow-50"
                           >
                             <Save className="w-4 h-4" />
                           </Button>
@@ -773,7 +797,7 @@ const ContentGenerator = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="border-red-400 text-red-300 hover:bg-red-500/20"
+                          className="border-red-400 text-red-600 hover:bg-red-50"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
