@@ -10,6 +10,7 @@ import CaseStudies from "./pages/CaseStudies";
 import Resources from "./pages/Resources";
 import ResourceViewer from "./pages/ResourceViewer";
 import Blog from "./pages/Blog";
+import ArticlePage from "./pages/ArticlePage";
 import Contact from "./pages/Contact";
 import WhatIsAgenticAI from "./pages/WhatIsAgenticAI";
 import NotFound from "./pages/NotFound";
@@ -18,6 +19,9 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import Dashboard from "./pages/admin/Dashboard";
 import ContentManager from "./pages/admin/ContentManager";
 import ContentGenerator from "./pages/admin/ContentGenerator";
+import AdvancedArticleGenerator from "./pages/admin/AdvancedArticleGenerator";
+import AutopilotDashboard from "./pages/admin/AutopilotDashboard";
+import RealTimeAutopilotDashboard from "./pages/admin/RealTimeAutopilotDashboard";
 import WebsiteManager from "./pages/admin/WebsiteManager";
 import NewsletterManager from "./pages/admin/NewsletterManager";
 import ChatbotManager from "./pages/admin/ChatbotManager";
@@ -67,7 +71,7 @@ const App = () => (
           <Route path="/resources" element={<Resources />} />
           <Route path="/resources/:slug" element={<ResourceViewer />} />
           <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<Blog />} />
+          <Route path="/blog/:slug" element={<ArticlePage />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/what-is-agentic-ai" element={<WhatIsAgenticAI />} />
           
@@ -76,6 +80,8 @@ const App = () => (
           <Route path="/admin-agentic" element={<AdminLayout><Dashboard /></AdminLayout>} />
           <Route path="/admin-agentic/content" element={<AdminLayout><ContentManager /></AdminLayout>} />
           <Route path="/admin-agentic/content-generator" element={<AdminLayout><ContentGenerator /></AdminLayout>} />
+          <Route path="/admin-agentic/advanced-article-generator" element={<AdminLayout><AdvancedArticleGenerator /></AdminLayout>} />
+          <Route path="/admin-agentic/autopilot" element={<AdminLayout><RealTimeAutopilotDashboard /></AdminLayout>} />
           <Route path="/admin-agentic/website" element={<AdminLayout><WebsiteManager /></AdminLayout>} />
           <Route path="/admin-agentic/chatbot" element={<AdminLayout><ChatbotManager /></AdminLayout>} />
           <Route path="/admin-agentic/contacts" element={<AdminLayout><ContactsManager /></AdminLayout>} />

@@ -1,0 +1,15 @@
+{
+  "tasks": {
+    "dev": "deno run --allow-net --allow-env --allow-read index.ts"
+  },
+  "imports": {
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2",
+    "cron": "https://deno.land/x/deno_cron@v1.0.0/cron.ts"
+  },
+  "functions": {
+    "autopilot-article-scheduler": {
+      "verify_jwt": false,
+      "import_map": "./import_map.json"
+    }
+  }
+}

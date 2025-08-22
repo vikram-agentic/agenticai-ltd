@@ -31,9 +31,9 @@ serve(async (req) => {
 
     console.log('Starting keyword research for:', seedKeyword);
 
-    // Real DataForSEO API integration
-    const DATAFORSEO_LOGIN = Deno.env.get('DATAFORSEO_LOGIN');
-    const DATAFORSEO_PASSWORD = Deno.env.get('DATAFORSEO_PASSWORD');
+    // Real DataForSEO API integration  
+    const DATAFORSEO_LOGIN = Deno.env.get('DATAFORSEO_LOGIN') || 'vikram@agentic-ai.ltd';
+    const DATAFORSEO_PASSWORD = Deno.env.get('DATAFORSEO_PASSWORD') || '66553273fb07b18c';
     
     let keywordData = [];
     let analysis = {};
@@ -103,8 +103,8 @@ async function getDataForSEOKeywords(seedKeyword: string, location: string, lang
   const auth = btoa(`${login}:${password}`);
   
   try {
-    // Get keyword suggestions
-    const suggestionsResponse = await fetch('https://api.dataforseo.com/v3/keywords_data/google_ads/suggestions/live', {
+    // Get keyword search volume using correct DataForSEO API
+    const suggestionsResponse = await fetch('https://api.dataforseo.com/v3/keywords_data/google_ads/search_volume/live', {
       method: 'POST',
       headers: {
         'Authorization': `Basic ${auth}`,
@@ -112,10 +112,7 @@ async function getDataForSEOKeywords(seedKeyword: string, location: string, lang
       },
       body: JSON.stringify([{
         keywords: [seedKeyword],
-        location_name: location,
-        language_name: language,
-        include_adult_keywords: false,
-        limit: 100
+        sort_by: "relevance"
       }])
     });
 

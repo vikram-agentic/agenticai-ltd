@@ -11,9 +11,12 @@ import {
   Calendar,
   BarChart3,
   Mail,
-  Clock
+  Clock,
+  Zap
 } from 'lucide-react';
 import { ResourceGenerator } from '@/components/ResourceGenerator';
+import GeneratedArticlesDisplay from '@/components/GeneratedArticlesDisplay';
+import RealTimeAutopilotProgress from '@/components/RealTimeAutopilotProgress';
 
 // --- Data Types ---
 interface ContactSubmission {
@@ -96,6 +99,56 @@ const AdminDashboard = () => {
     // In a real app, you'd clear the auth token
     setIsAuthenticated(false);
     navigate('/');
+  };
+
+  const triggerAutopilotGeneration = async () => {
+    try {
+      toast({
+        title: "Starting AI Autopilot",
+        description: "Generating articles with real-time research and AI content creation...",
+      });
+
+      const response = await fetch(`${process.env.REACT_APP_SUPABASE_URL}/functions/v1/autopilot-article-scheduler`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: 'execute' })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          toast({
+            title: "Articles Generated Successfully!",
+            description: `Generated ${data.data.successCount} articles out of ${data.data.articlesGenerated} attempted.`,
+          });
+          // Refresh the page to show new articles
+          setTimeout(() => window.location.reload(), 2000);
+        } else {
+          toast({
+            title: "Generation Failed",
+            description: data.error || "Failed to generate articles. Please check the logs.",
+            variant: "destructive",
+          });
+        }
+      } else {
+        const errorText = await response.text();
+        toast({
+          title: "Generation Failed",
+          description: `HTTP ${response.status}: ${errorText}`,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error triggering autopilot:', error);
+      toast({
+        title: "Generation Failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -208,6 +261,44 @@ const AdminDashboard = () => {
         </div>
         <div className="mt-8">
           <ResourceGenerator />
+        </div>
+        
+        {/* Generated Articles Section */}
+        <div className="mt-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Zap className="w-5 h-5 mr-2 text-blue-500" />
+                AI Autopilot Article Generation
+              </CardTitle>
+              <CardDescription>
+                Automatically generate high-quality, SEO-optimized articles using AI
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center space-x-4">
+                <Button 
+                  onClick={triggerAutopilotGeneration}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  Generate Articles Now
+                </Button>
+                <div className="text-sm text-gray-600">
+                  Generates 4-5 articles with real-time research and AI content creation
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <div className="mt-6">
+            <GeneratedArticlesDisplay />
+          </div>
+        </div>
+        
+        {/* Real-Time Autonomous AI Generation */}
+        <div className="mt-8">
+          <RealTimeAutopilotProgress />
         </div>
       </main>
     </div>
